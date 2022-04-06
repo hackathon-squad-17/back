@@ -22,6 +22,5 @@ public class PostController {
     @PostMapping
     public @ResponseBody Post cadastrar(@RequestBody Post post) {
         return actions.save(post);
-
     }
 }

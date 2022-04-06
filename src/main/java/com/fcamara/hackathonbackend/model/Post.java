@@ -12,11 +12,11 @@ public class Post {
     private int id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "userId", referencedColumnName = "id")
     private Usuario usuario;
 
-    @OneToMany(mappedBy = "posts", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comentario> comentarios;
+//    @OneToMany(mappedBy = "posts", cascade = CascadeType.ALL, orphanRemoval = true)
+  //  private List<Comentario> comentarios;
 
     @Column(name = "conteudoPost")
     private String conteudoPost;
