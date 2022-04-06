@@ -20,6 +20,12 @@ public class Usuario {
 
     public Usuario() {}
 
+    public Usuario(String nome, String password, String email) {
+        this.nome = nome;
+        this.password = password;
+        this.email = email;
+    }
+
     /* Metodos de acessibilidade */
     public String getNome() {
         return nome;
