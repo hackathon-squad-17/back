@@ -1,0 +1,26 @@
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
+             http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
+             version="2.1">
+    <!-- Unidade de persistencia -->
+    <persistence-unit name = "hackathon-squad17-persistence-unit" transaction-type="RESOURCE_LOCAL">
+
+        <description> Unidade de persistencia Hackathon FCamara Squad 17 </description>
+
+        <!-- Classes (entidades) que serao mapeadas -->
+        <class>model.Usuario</class>
+
+        <!-- Configuracoes de conexao ao banco de dados -->
+        <properties>
+            <!-- Configuracoes do banco de dados -->
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect"/>
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.hbm2ddl.auto" value="create"/> <!-- Valores possiveis: create, update, validate e create-drop -->
+            <property name="hibernate.connection.driver_class" value="com.mysql.cj.jdbc.Driver"/>
+            <property name="hibernate.connection.url" value="jdbc:mysql://localhost/hackathon_squad17" />
+            <property name="hibernate.connection.username" value="root"/>
+            <property name="hibernate.connection.password" value="MySQL12345*"/>
+        </properties>
+    </persistence-unit>
+</persistence>
