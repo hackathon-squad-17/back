@@ -4,8 +4,8 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name="posts")
-public class Post {
+@Table(name="comentarios")
+public class Comentario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -15,14 +15,13 @@ public class Post {
     @JoinColumn(name = "userId")
     private Usuario usuario;
 
-    @OneToMany(mappedBy = "posts", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comentario> comentarios;
-
-    @Column(name = "conteudoPost")
+    @Column(name = "conteudoComentario")
     private String conteudoPost;
 
-    @Column(name = "tituloPost")
-    private String tituloPost;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "postId")
+    private Post post;
+
 
     public int getId() {
         return id;
@@ -48,11 +47,12 @@ public class Post {
         this.conteudoPost = conteudoPost;
     }
 
-    public String getTituloPost() {
-        return tituloPost;
+    public Post getPost() {
+        return post;
     }
 
-    public void setTituloPost(String tituloPost) {
-        this.tituloPost = tituloPost;
+    public void setPost(Post post) {
+        this.post = post;
     }
 }
+
