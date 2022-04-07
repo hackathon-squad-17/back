@@ -14,16 +14,19 @@ public class UsuarioController {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    @GetMapping(path = "/todos")
+    @GetMapping(path = "/todos-usuario")
     public List<Usuario> listarUsuarios() {
         return usuarioRepository.findAll();
     }
 
     @PostMapping("/novo-usuario")
     @ResponseStatus(HttpStatus.CREATED)
-    public Usuario adicionarUsuario(@RequestParam String nome, @RequestParam String password, @RequestParam String email) {
-        Usuario usuario = new Usuario(nome, password, email);
+    public Usuario adicionarUsuario(@RequestParam String nome,
+                                    @RequestParam String login,
+                                    @RequestParam String password,
+                                    @RequestParam String email) {
+        Usuario novoUsuario = new Usuario(nome, login, password, email);
 
-        return usuarioRepository.save(usuario);
+        return usuarioRepository.save(novoUsuario);
     }
 }

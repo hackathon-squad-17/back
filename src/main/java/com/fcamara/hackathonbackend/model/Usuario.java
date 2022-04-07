@@ -1,10 +1,14 @@
 package com.fcamara.hackathonbackend.model;
 
+import org.hibernate.annotations.NaturalId;
+
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
 public class Usuario {
+    /* Propriedades */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -12,19 +16,30 @@ public class Usuario {
     @Column(nullable = false)
     private String nome;
 
+    @NaturalId
+    @Column(nullable = false)
+    private String login;
+
     @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)
     private String email;
 
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Postagem> postagens; // eh necessario que seja uma colecao
+    /* ------------------------- */
+
+    /* Construtores */
     public Usuario() {}
 
-    public Usuario(String nome, String password, String email) {
+    public Usuario(String nome, String login, String password, String email) {
         this.nome = nome;
+        this.login = login;
         this.password = password;
         this.email = email;
     }
+    /* ------------------------- */
 
     /* Metodos de acessibilidade */
     public String getNome() {
@@ -33,6 +48,14 @@ public class Usuario {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
     }
 
     public String getPassword() {
@@ -50,7 +73,14 @@ public class Usuario {
     public void setEmail(String email) {
         this.email = email;
     }
-    /* ------------------------- */
+
+    public List<Postagem> getPostagem() {
+        return postagens;
+    }
+
+    public void setPostagem(List<Postagem> postagem) {
+        this.postagens = postagem;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -64,4 +94,18 @@ public class Usuario {
     public int hashCode() {
         return Objects.hash(id, nome, password, email);
     }
+    /* ------------------------- */
+
+    /* Metodos necessarios */
+    @Override
+    public String toString() {
+        return "Usuário[" +
+                "\n\t" + nome +
+                "\n\t" + login +
+                "\n\t" + password +
+                "\n\t" + email +
+                "]";
+    }
+
+
 }

@@ -10,6 +10,8 @@
 
         <!-- Classes (entidades) que serao mapeadas -->
         <class>model.Usuario</class>
+        <class>model.Postagem</class>
+        <class>model.Comentario</class>
 
         <!-- Configuracoes de conexao ao banco de dados -->
         <properties>
