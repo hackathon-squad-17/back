@@ -6,12 +6,12 @@ import com.fcamara.hackathonbackend.repository.PostagemRepository;
 import com.fcamara.hackathonbackend.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping(path = "/postagens")
@@ -28,25 +28,33 @@ public class PostagemController {
 
     @GetMapping(path = "/postagens-login")
     public List<Postagem> listarPorLogin(@RequestParam String login) {
-        Usuario usuarioReferente = usuarioRepository.findByLogin(login);
-
-        return usuarioReferente.getPostagem();
+        Optional<Usuario> usuarioReferente = usuarioRepository.findByLogin(login);
+        if (usuarioReferente.isPresent()){
+            return usuarioReferente.get().getPostagem();
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     @PostMapping(path = "/nova-postagem")
     @ResponseStatus(HttpStatus.CREATED)
-    public Postagem adicionarPostagem(@RequestParam String login,
-                                      @RequestParam String titulo,
-                                      @RequestParam String conteudo) {
-        Usuario usuarioReferente = usuarioRepository.findByLogin(login);
+    public ResponseEntity<?> adicionarPostagem(@RequestParam String login,
+                                              @RequestParam String titulo,
+                                              @RequestParam String conteudo) {
+        Optional<Usuario> usuarioReferente = usuarioRepository.findByLogin(login);
 
-        Date today = new Date();
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        String dataDeHoje = dateFormat.format(today);
-        System.out.println(dataDeHoje);
+        if(usuarioReferente.isPresent()){
+            Date today = new Date();
+            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            String dataDeHoje = dateFormat.format(today);
+            System.out.println(dataDeHoje);
 
-        Postagem novaPostagem = new Postagem(usuarioReferente, titulo, conteudo, dataDeHoje);
+            Postagem novaPostagem = new Postagem(usuarioReferente.get(), titulo, conteudo, dataDeHoje);
+            postagemRepository.save(novaPostagem);
 
-        return postagemRepository.save(novaPostagem);
+            return new ResponseEntity<>(null, HttpStatus.CREATED);
+        }
+
+        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

@@ -15,6 +15,9 @@ public class Comentario {
     @ManyToOne(fetch = FetchType.EAGER)
     private Postagem postagem;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Usuario usuario;
+
     @Column(nullable = false)
     private String conteudoComentario;
 
@@ -25,8 +28,9 @@ public class Comentario {
     /* Construtores */
     public Comentario() {}
 
-    public Comentario(Postagem postagem, String conteudoComentario, String dataCriacaoComentario) {
+    public Comentario(Postagem postagem, Usuario usuario, String conteudoComentario, String dataCriacaoComentario) {
         this.postagem = postagem;
+        this.usuario = usuario;
         this.conteudoComentario = conteudoComentario;
         this.dataCriacaoComentario = dataCriacaoComentario;
     }
@@ -58,5 +62,22 @@ public class Comentario {
     public void setDataCriacaoComentario(String dataCriacaoComentario) {
         this.dataCriacaoComentario = dataCriacaoComentario;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
     /* ------------------------- */
 }

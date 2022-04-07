@@ -27,6 +27,7 @@ public class Postagem {
 
     @OneToMany(mappedBy = "postagem", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comentario> comentarios;
+
     /* ------------------------- */
 
     /* Construtores */
