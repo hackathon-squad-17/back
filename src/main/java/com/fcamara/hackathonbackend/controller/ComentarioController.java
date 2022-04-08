@@ -36,17 +36,16 @@ public class ComentarioController {
 
     @PostMapping(path = "/novo-comentario")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> adicionarComentario(@RequestParam Integer post_id,
+    public ResponseEntity<?> adicionarComentario(@RequestParam int idPost,
                                                  @RequestParam String conteudo,
                                                  @RequestParam String login) {
-        Optional<Postagem> postagem = postagemRepository.findById(post_id);
+        Optional<Postagem> postagem = postagemRepository.findById(idPost);
         Optional<Usuario> usuario = usuarioRepository.findByLogin(login);
 
         if (postagem.isPresent() && usuario.isPresent()) {
             Date today = new Date();
             DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
             String dataDeHoje = dateFormat.format(today);
-            System.out.println(dataDeHoje);
 
             Comentario novoComentario = new Comentario(postagem.get(), usuario.get(), conteudo, dataDeHoje);
             comentarioRepository.save(novoComentario);

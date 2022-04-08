@@ -10,8 +10,6 @@ public class Comentario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    /*@Column
-    private String postagem;*/
     @ManyToOne(fetch = FetchType.EAGER)
     private Postagem postagem;
 

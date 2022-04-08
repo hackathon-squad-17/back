@@ -39,8 +39,8 @@ public class PostagemController {
     @PostMapping(path = "/nova-postagem")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> adicionarPostagem(@RequestParam String login,
-                                              @RequestParam String titulo,
-                                              @RequestParam String conteudo) {
+                                               @RequestParam String titulo,
+                                               @RequestParam String conteudo) {
         Optional<Usuario> usuarioReferente = usuarioRepository.findByLogin(login);
 
         if(usuarioReferente.isPresent()){

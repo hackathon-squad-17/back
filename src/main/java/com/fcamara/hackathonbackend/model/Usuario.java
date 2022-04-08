@@ -16,7 +16,6 @@ public class Usuario {
     @Column(nullable = false)
     private String nome;
 
-    //@NaturalId
     @Column(nullable = false)
     private String login;
 
@@ -25,6 +24,12 @@ public class Usuario {
 
     @Column(nullable = false)
     private String email;
+
+    @Column
+    private String areaAtuacao;
+
+    @ElementCollection
+    private List<String> habilidades;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Postagem> postagens; // eh necessario que seja uma colecao
@@ -74,6 +79,22 @@ public class Usuario {
         this.email = email;
     }
 
+    public String getAreaAtuacao() {
+        return areaAtuacao;
+    }
+
+    public void setAreaAtuacao(String areaAtuacao) {
+        this.areaAtuacao = areaAtuacao;
+    }
+
+    public List<String> getHabilidades() {
+        return habilidades;
+    }
+
+    public void setHabilidades(List<String> habilidades) {
+        this.habilidades = habilidades;
+    }
+
     public List<Postagem> getPostagem() {
         return postagens;
     }
@@ -97,6 +118,10 @@ public class Usuario {
     /* ------------------------- */
 
     /* Metodos necessarios */
+    public void setUmaHabilidade(String habilidade) {
+        this.habilidades.add(habilidade);
+    }
+
     @Override
     public String toString() {
         return "Usuário[" +
@@ -106,6 +131,7 @@ public class Usuario {
                 "\n\t" + email +
                 "]";
     }
+    /* ------------------------- */
 
 
 }
