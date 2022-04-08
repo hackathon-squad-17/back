@@ -47,12 +47,12 @@ public class ComentarioController {
             DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
             String dataDeHoje = dateFormat.format(today);
             System.out.println(dataDeHoje);
+
             Comentario novoComentario = new Comentario(postagem.get(), usuario.get(), conteudo, dataDeHoje);
             comentarioRepository.save(novoComentario);
+
             return new ResponseEntity<>(null, HttpStatus.CREATED);
-        }
-
-        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-
+        } else
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

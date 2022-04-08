@@ -53,8 +53,7 @@ public class PostagemController {
             postagemRepository.save(novaPostagem);
 
             return new ResponseEntity<>(null, HttpStatus.CREATED);
-        }
-
-        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        } else
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

@@ -23,9 +23,9 @@ public class UsuarioController {
     @PostMapping("/novo-usuario")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> adicionarUsuario(@RequestParam String nome,
-                                    @RequestParam String login,
-                                    @RequestParam String password,
-                                    @RequestParam String email) {
+                                              @RequestParam String login,
+                                              @RequestParam String password,
+                                              @RequestParam String email) {
         Usuario novoUsuario = new Usuario(nome, login, password, email);
         usuarioRepository.save(novoUsuario);
         return new ResponseEntity<>(null, HttpStatus.CREATED);

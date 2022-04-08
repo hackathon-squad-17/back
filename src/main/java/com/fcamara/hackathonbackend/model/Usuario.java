@@ -16,7 +16,7 @@ public class Usuario {
     @Column(nullable = false)
     private String nome;
 
-    @NaturalId
+    //@NaturalId
     @Column(nullable = false)
     private String login;
 

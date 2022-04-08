@@ -13,16 +13,28 @@
         <class>model.Postagem</class>
         <class>model.Comentario</class>
 
-        <!-- Configuracoes de conexao ao banco de dados -->
+        <!-- Configuracoes de conexao ao banco de dados PostgreSQL -->
         <properties>
             <!-- Configuracoes do banco de dados -->
-            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL82Dialect"/>
             <property name="hibernate.format_sql" value="true"/>
             <property name="hibernate.hbm2ddl.auto" value="create"/> <!-- Valores possiveis: create, update, validate e create-drop -->
+            <property name="hibernate.connection.driver_class" value="org.postgresql.Driver"/>
+            <property name="hibernate.connection.url" value="jdbc:postgresql://localhost/hackathon_squad17" />
+            <property name="hibernate.connection.username" value="fcamara"/>
+            <property name="hibernate.connection.password" value="postgres"/>
+        </properties>
+
+        <!-- Configuracoes de conexao ao banco de dados MySQL -->
+        <!--<properties>
+            &lt;!&ndash; Configuracoes do banco de dados &ndash;&gt;
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect"/>
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.hbm2ddl.auto" value="create"/> &lt;!&ndash; Valores possiveis: create, update, validate e create-drop &ndash;&gt;
             <property name="hibernate.connection.driver_class" value="com.mysql.cj.jdbc.Driver"/>
             <property name="hibernate.connection.url" value="jdbc:mysql://localhost/hackathon_squad17" />
             <property name="hibernate.connection.username" value="root"/>
             <property name="hibernate.connection.password" value="MySQL12345*"/>
-        </properties>
+        </properties>-->
     </persistence-unit>
 </persistence>
