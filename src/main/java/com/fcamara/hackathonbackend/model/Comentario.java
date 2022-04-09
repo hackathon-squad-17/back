@@ -18,7 +18,7 @@ public class Comentario {
     private Postagem postagem;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JsonIgnore
+    // @JsonIgnore
     private Usuario usuario;
 
     @Column(nullable = false, name = "conteudo")

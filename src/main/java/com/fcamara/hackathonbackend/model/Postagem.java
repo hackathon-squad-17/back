@@ -16,7 +16,7 @@ public class Postagem {
     private int id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JsonBackReference
+   // @JsonBackReference
     private Usuario usuario;
 
     @Column(nullable = false, name = "titulo")

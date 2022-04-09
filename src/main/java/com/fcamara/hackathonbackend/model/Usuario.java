@@ -1,8 +1,10 @@
 package com.fcamara.hackathonbackend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
+import java.sql.Blob;
 import java.util.List;
 import java.util.Objects;
 
@@ -20,6 +22,7 @@ public class Usuario {
     private String login;
 
     @Column(nullable = false, name = "senha")
+    @JsonIgnore
     private String password;
 
     @Column(nullable = false, name = "email")
@@ -31,9 +34,9 @@ public class Usuario {
     @ElementCollection
     private List<String> habilidades;
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private List<Postagem> postagens;
+    // @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    // @JsonManagedReference
+    // private List<Postagem> postagens;
     /* ---------------------------------------------------- */
 
 
@@ -98,13 +101,14 @@ public class Usuario {
         this.habilidades = habilidades;
     }
 
-    public List<Postagem> getPostagem() {
-        return postagens;
+   // public List<Postagem> getPostagem() { return postagens;}
+
+    // public void setPostagem(List<Postagem> postagem) { this.postagens = postagem; }
+
+    public int getId() {
+        return id;
     }
 
-    public void setPostagem(List<Postagem> postagem) {
-        this.postagens = postagem;
-    }
 
     @Override
     public boolean equals(Object o) {

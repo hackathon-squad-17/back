@@ -51,14 +51,16 @@ public class PostagemController {
         Lista todas as postagens existentes
     */
     @GetMapping(path = "/todas-postagens")
+    @CrossOrigin("*")
     public List<Postagem> listarPostagens() {
-        return postagemRepository.findAll();
+       List<Postagem> teste = postagemRepository.findAll() ;
+       return teste;
     }
 
     /*
         Lista todas as postagens de um login especificado
     */
-    @GetMapping(path = "/postagens-login")
+    /* @GetMapping(path = "/postagens-login")
     public List<Postagem> listarPorLogin(@RequestParam String login) {
         Optional<Usuario> usuarioReferente = usuarioRepository.findByLogin(login);
         if (usuarioReferente.isPresent()){
@@ -66,7 +68,7 @@ public class PostagemController {
         } else {
             return Collections.emptyList();
         }
-    }
+    } */
 
     /*
         Busca titulos de postagens, de acordo com a busca inserida, fornecendo sugestoes enquanto a busca eh realizada
