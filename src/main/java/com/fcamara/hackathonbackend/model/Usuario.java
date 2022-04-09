@@ -1,5 +1,7 @@
 package com.fcamara.hackathonbackend.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
@@ -30,6 +32,7 @@ public class Usuario {
     private List<String> habilidades;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Postagem> postagens;
     /* ---------------------------------------------------- */
 

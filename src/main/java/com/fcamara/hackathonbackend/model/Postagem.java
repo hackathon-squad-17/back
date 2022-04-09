@@ -1,6 +1,9 @@
 package com.fcamara.hackathonbackend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 import java.util.List;
@@ -13,7 +16,7 @@ public class Postagem {
     private int id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JsonIgnore
+    @JsonBackReference
     private Usuario usuario;
 
     @Column(nullable = false, name = "titulo")
@@ -26,6 +29,7 @@ public class Postagem {
     private String dataCriacaoPostagem;
 
     @OneToMany(mappedBy = "postagem", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Comentario> comentarios;
     /* ---------------------------------------------------- */
 

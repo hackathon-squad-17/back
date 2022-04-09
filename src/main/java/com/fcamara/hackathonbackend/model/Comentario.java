@@ -1,5 +1,8 @@
 package com.fcamara.hackathonbackend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -11,9 +14,11 @@ public class Comentario {
     private int id;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JsonBackReference
     private Postagem postagem;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
     private Usuario usuario;
 
     @Column(nullable = false, name = "conteudo")
