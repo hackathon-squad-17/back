@@ -1,41 +1,40 @@
 package com.fcamara.hackathonbackend.model;
 
-import org.hibernate.annotations.NaturalId;
-
 import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
 public class Usuario {
-    /* Propriedades */
+    /* ------------------- Propriedades ------------------- */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "nome")
     private String nome;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "login")
     private String login;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "senha")
     private String password;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "email")
     private String email;
 
-    @Column
+    @Column(name = "area_de_atuacao")
     private String areaAtuacao;
 
     @ElementCollection
     private List<String> habilidades;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Postagem> postagens; // eh necessario que seja uma colecao
-    /* ------------------------- */
+    private List<Postagem> postagens;
+    /* ---------------------------------------------------- */
 
-    /* Construtores */
+
+    /* ------------------- Construtores ------------------- */
     public Usuario() {}
 
     public Usuario(String nome, String login, String password, String email) {
@@ -44,9 +43,10 @@ public class Usuario {
         this.password = password;
         this.email = email;
     }
-    /* ------------------------- */
+    /* ---------------------------------------------------- */
 
-    /* Metodos de acessibilidade */
+
+    /* ------------ Métodos de acessibilidade ------------- */
     public String getNome() {
         return nome;
     }
@@ -115,9 +115,10 @@ public class Usuario {
     public int hashCode() {
         return Objects.hash(id, nome, password, email);
     }
-    /* ------------------------- */
+    /* ---------------------------------------------------- */
 
-    /* Metodos necessarios */
+
+    /* --------------- Métodos necessarios ---------------- */
     public void setUmaHabilidade(String habilidade) {
         this.habilidades.add(habilidade);
     }
@@ -131,7 +132,5 @@ public class Usuario {
                 "\n\t" + email +
                 "]";
     }
-    /* ------------------------- */
-
-
+    /* ---------------------------------------------------- */
 }

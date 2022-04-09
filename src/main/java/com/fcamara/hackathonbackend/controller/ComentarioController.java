@@ -22,20 +22,15 @@ import java.util.Optional;
 public class ComentarioController {
     @Autowired
     ComentarioRepository comentarioRepository;
-
     @Autowired
     PostagemRepository postagemRepository;
-
     @Autowired
     UsuarioRepository usuarioRepository;
 
-    @GetMapping(path = "/todos-comentarios")
-    public List<Comentario> listarComentarios() {
-        return comentarioRepository.findAll();
-    }
-
+    /*
+        Cria um novo comentario
+    */
     @PostMapping(path = "/novo-comentario")
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> adicionarComentario(@RequestParam int idPost,
                                                  @RequestParam String conteudo,
                                                  @RequestParam String login) {
@@ -54,4 +49,14 @@ public class ComentarioController {
         } else
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    /*
+        Lista todos os comentarios existentes
+    */
+    @GetMapping(path = "/todos-comentarios")
+    public List<Comentario> listarComentarios() {
+        return comentarioRepository.findAll();
+    }
+
+
 }

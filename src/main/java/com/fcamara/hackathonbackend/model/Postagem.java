@@ -7,7 +7,7 @@ import java.util.List;
 
 @Entity
 public class Postagem {
-    /* Propriedades */
+    /* ------------------- Propriedades ------------------- */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -16,21 +16,21 @@ public class Postagem {
     @JsonIgnore
     private Usuario usuario;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "titulo")
     private String titulo;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "conteudo")
     private String conteudoPostagem;
 
-    @Column(nullable = true)
+    @Column(nullable = true, name = "data_de_criacao")
     private String dataCriacaoPostagem;
 
     @OneToMany(mappedBy = "postagem", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comentario> comentarios;
+    /* ---------------------------------------------------- */
 
-    /* ------------------------- */
 
-    /* Construtores */
+    /* ------------------- Construtores ------------------- */
     public Postagem() {}
 
     public Postagem(Usuario usuario, String titulo, String conteudoPostagem, String dataCriacaoPostagem) {
@@ -39,10 +39,10 @@ public class Postagem {
         this.conteudoPostagem = conteudoPostagem;
         this.dataCriacaoPostagem = dataCriacaoPostagem;
     }
+    /* ---------------------------------------------------- */
 
-    /* ------------------------- */
 
-    /* Metodos de acessibilidade */
+    /* ------------ Métodos de assecibilidade ------------- */
     public Usuario getUsuario() {
         return usuario;
     }
@@ -82,5 +82,5 @@ public class Postagem {
     public void setComentarios(List<Comentario> comentarios) {
         this.comentarios = comentarios;
     }
-    /* ------------------------- */
+    /* ---------------------------------------------------- */
 }

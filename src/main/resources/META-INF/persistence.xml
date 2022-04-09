@@ -12,6 +12,7 @@
         <class>model.Usuario</class>
         <class>model.Postagem</class>
         <class>model.Comentario</class>
+        <class>model.Habilidade</class>
 
         <!-- Configuracoes de conexao ao banco de dados PostgreSQL -->
         <properties>

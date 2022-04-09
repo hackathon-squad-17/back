@@ -10,8 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.DateFormat;
+import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping(path = "/postagens")
@@ -21,21 +23,9 @@ public class PostagemController {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    @GetMapping(path = "/todas-postagens")
-    public List<Postagem> listarPostagens() {
-        return postagemRepository.findAll();
-    }
-
-    @GetMapping(path = "/postagens-login")
-    public List<Postagem> listarPorLogin(@RequestParam String login) {
-        Optional<Usuario> usuarioReferente = usuarioRepository.findByLogin(login);
-        if (usuarioReferente.isPresent()){
-            return usuarioReferente.get().getPostagem();
-        } else {
-            return Collections.emptyList();
-        }
-    }
-
+    /*
+        Cria uma nova postagem
+    */
     @PostMapping(path = "/nova-postagem")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> adicionarPostagem(@RequestParam String login,
@@ -56,4 +46,75 @@ public class PostagemController {
         } else
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    /*
+        Lista todas as postagens existentes
+    */
+    @GetMapping(path = "/todas-postagens")
+    public List<Postagem> listarPostagens() {
+        return postagemRepository.findAll();
+    }
+
+    /*
+        Lista todas as postagens de um login especificado
+    */
+    @GetMapping(path = "/postagens-login")
+    public List<Postagem> listarPorLogin(@RequestParam String login) {
+        Optional<Usuario> usuarioReferente = usuarioRepository.findByLogin(login);
+        if (usuarioReferente.isPresent()){
+            return usuarioReferente.get().getPostagem();
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    /*
+        Busca titulos de postagens, de acordo com a busca inserida, fornecendo sugestoes enquanto a busca eh realizada
+    */
+    @GetMapping(path = "/busca-postagem-sugestoes") // fornece sugestoes de titulos de acordo com a busca feita
+    public List<String> buscarPostagemComSugestoes(@RequestParam String busca) {
+        List<String> listaTitulosPostagem = postagemRepository.findTitulos();
+        //List<String> listaConteudoPostagem = postagemRepository.findConteudos();
+        List<String> sugestoes = new ArrayList<>();
+
+        listaTitulosPostagem.forEach(itemLista -> {
+            // Tratamento de acentos
+            String itemListaNormalizado = Normalizer.normalize(itemLista, Normalizer.Form.NFD);
+            Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+            String itemListaTratado = pattern.matcher(itemListaNormalizado).replaceAll("");
+
+            if (itemListaTratado.toLowerCase().contains(busca))
+                sugestoes.add(itemLista);
+        });
+
+        return sugestoes;
+    }
+
+    /*
+        Busca conteudos de postagens de acordo com a busca inserida
+    */
+    @GetMapping(path = "/busca-conteudo-postagem")
+    public List<Postagem> buscarConteudoPostagem(@RequestParam String busca) {
+        List<String> listaConteudosPostagens = postagemRepository.findConteudos();
+        List<Postagem> postagensEncontradas = new ArrayList<>();
+
+        listaConteudosPostagens.forEach(itemLista -> {
+            // Tratamento de acentos
+            String itemListaNormalizado = Normalizer.normalize(itemLista, Normalizer.Form.NFD);
+            Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+            String itemListaTratado = pattern.matcher(itemListaNormalizado).replaceAll("");
+
+            if (itemListaTratado.toLowerCase().contains(busca)) {
+                int indiceItemLista = listaConteudosPostagens.indexOf(itemLista);
+                int indiceItemPostagem = indiceItemLista + 1; // os ids comecam em 1
+
+                Optional<Postagem> postagemOptional = postagemRepository.findById(indiceItemPostagem);
+                postagemOptional.ifPresent(postagensEncontradas::add);
+            }
+        });
+
+        return postagensEncontradas;
+    }
+
+
 }

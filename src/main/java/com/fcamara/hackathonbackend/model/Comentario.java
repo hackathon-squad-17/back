@@ -5,7 +5,7 @@ import java.util.Date;
 
 @Entity
 public class Comentario {
-    /* Propriedades */
+    /* ------------------- Propriedades ------------------- */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -16,14 +16,15 @@ public class Comentario {
     @ManyToOne(fetch = FetchType.EAGER)
     private Usuario usuario;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "conteudo")
     private String conteudoComentario;
 
-    @Column(nullable = true)
+    @Column(nullable = true, name = "data_de_criacao")
     private String dataCriacaoComentario;
-    /* ------------------------- */
+    /* ---------------------------------------------------- */
 
-    /* Construtores */
+
+    /* ------------------- Construtores ------------------- */
     public Comentario() {}
 
     public Comentario(Postagem postagem, Usuario usuario, String conteudoComentario, String dataCriacaoComentario) {
@@ -32,11 +33,10 @@ public class Comentario {
         this.conteudoComentario = conteudoComentario;
         this.dataCriacaoComentario = dataCriacaoComentario;
     }
+    /* ---------------------------------------------------- */
 
-    /* ------------------------- */
 
-    /* Metodos de acessibilidade */
-
+    /* ------------ Métodos de acessibilidade ------------- */
     public Postagem getPostagem() {
         return postagem;
     }
@@ -76,6 +76,5 @@ public class Comentario {
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
     }
-
-    /* ------------------------- */
+    /* ---------------------------------------------------- */
 }
