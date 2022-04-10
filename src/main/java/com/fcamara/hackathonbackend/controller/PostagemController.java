@@ -53,8 +53,19 @@ public class PostagemController {
     @GetMapping(path = "/todas-postagens")
     @CrossOrigin("*")
     public List<Postagem> listarPostagens() {
-       List<Postagem> teste = postagemRepository.findAll() ;
-       return teste;
+       return postagemRepository.findAll();
+    }
+
+    @GetMapping(path = "/postagem-id")
+    @CrossOrigin("*")
+    public Postagem postagemId(Integer id){
+        Optional<Postagem> postagem =  postagemRepository.findById(id);
+        if (postagem.isPresent()){
+            return postagem.get();
+        } else {
+            return new Postagem();
+        }
+
     }
 
     /*
