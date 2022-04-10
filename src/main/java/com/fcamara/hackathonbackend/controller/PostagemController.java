@@ -56,6 +56,9 @@ public class PostagemController {
        return postagemRepository.findAll();
     }
 
+    /*
+        Lista postagem do id especificado ou cria uma, caso nao exista
+    */
     @GetMapping(path = "/postagem-id")
     @CrossOrigin("*")
     public Postagem postagemId(Integer id){
