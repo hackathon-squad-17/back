@@ -1,6 +1,7 @@
 package com.fcamara.hackathonbackend.controller;
 
 import com.fcamara.hackathonbackend.model.Postagem;
+import com.fcamara.hackathonbackend.model.PostagemForm;
 import com.fcamara.hackathonbackend.model.Usuario;
 import com.fcamara.hackathonbackend.repository.PostagemRepository;
 import com.fcamara.hackathonbackend.repository.UsuarioRepository;
@@ -28,10 +29,9 @@ public class PostagemController {
     */
     @PostMapping(path = "/nova-postagem")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> adicionarPostagem(@RequestParam String login,
-                                               @RequestParam String titulo,
-                                               @RequestParam String conteudo) {
-        Optional<Usuario> usuarioReferente = usuarioRepository.findByLogin(login);
+    @CrossOrigin("*")
+    public ResponseEntity<?> adicionarPostagem(@RequestBody PostagemForm postagemForm) {
+        Optional<Usuario> usuarioReferente = usuarioRepository.findByLogin(postagemForm.getLogin());
 
         if(usuarioReferente.isPresent()){
             Date today = new Date();
@@ -39,7 +39,7 @@ public class PostagemController {
             String dataDeHoje = dateFormat.format(today);
             System.out.println(dataDeHoje);
 
-            Postagem novaPostagem = new Postagem(usuarioReferente.get(), titulo, conteudo, dataDeHoje);
+            Postagem novaPostagem = new Postagem(usuarioReferente.get(), postagemForm.getTitulo(), postagemForm.getConteudo(), dataDeHoje);
             postagemRepository.save(novaPostagem);
 
             return new ResponseEntity<>(null, HttpStatus.CREATED);

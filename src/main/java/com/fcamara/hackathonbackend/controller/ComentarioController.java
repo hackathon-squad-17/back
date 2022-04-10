@@ -1,6 +1,7 @@
 package com.fcamara.hackathonbackend.controller;
 
 import com.fcamara.hackathonbackend.model.Comentario;
+import com.fcamara.hackathonbackend.model.ComentarioForm;
 import com.fcamara.hackathonbackend.model.Postagem;
 import com.fcamara.hackathonbackend.model.Usuario;
 import com.fcamara.hackathonbackend.repository.ComentarioRepository;
@@ -31,18 +32,17 @@ public class ComentarioController {
         Cria um novo comentario
     */
     @PostMapping(path = "/novo-comentario")
-    public ResponseEntity<?> adicionarComentario(@RequestParam int idPost,
-                                                 @RequestParam String conteudo,
-                                                 @RequestParam String login) {
-        Optional<Postagem> postagem = postagemRepository.findById(idPost);
-        Optional<Usuario> usuario = usuarioRepository.findByLogin(login);
+    @CrossOrigin("*")
+    public ResponseEntity<?> adicionarComentario(@RequestBody ComentarioForm comentarioForm) {
+        Optional<Postagem> postagem = postagemRepository.findById(comentarioForm.getIdPost());
+        Optional<Usuario> usuario = usuarioRepository.findByLogin(comentarioForm.getLogin());
 
         if (postagem.isPresent() && usuario.isPresent()) {
             Date today = new Date();
             DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
             String dataDeHoje = dateFormat.format(today);
 
-            Comentario novoComentario = new Comentario(postagem.get(), usuario.get(), conteudo, dataDeHoje);
+            Comentario novoComentario = new Comentario(postagem.get(), usuario.get(), comentarioForm.getConteudo(), dataDeHoje);
             comentarioRepository.save(novoComentario);
 
             return new ResponseEntity<>(null, HttpStatus.CREATED);
