@@ -34,6 +34,9 @@ public class Usuario {
     @ElementCollection
     private List<String> habilidades;
 
+    @Column //(name = "foto_de_perfil")
+    private String foto;
+
     // @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     // @JsonManagedReference
     // private List<Postagem> postagens;
@@ -43,16 +46,21 @@ public class Usuario {
     /* ------------------- Construtores ------------------- */
     public Usuario() {}
 
-    public Usuario(String nome, String login, String password, String email) {
+    public Usuario(String nome, String login, String password, String email, String foto) {
         this.nome = nome;
         this.login = login;
         this.password = password;
         this.email = email;
+        this.foto = foto;
     }
     /* ---------------------------------------------------- */
 
 
     /* ------------ Métodos de acessibilidade ------------- */
+    public int getId() {
+        return id;
+    }
+
     public String getNome() {
         return nome;
     }
@@ -101,13 +109,14 @@ public class Usuario {
         this.habilidades = habilidades;
     }
 
-   // public List<Postagem> getPostagem() { return postagens;}
+    @Transient
+    public String getFotosCaminhoImagem() {
+        if (foto == null || id == 0)
+            return null;
 
-    // public void setPostagem(List<Postagem> postagem) { this.postagens = postagem; }
-
-    public int getId() {
-        return id;
+        return "/usuario-fotos" + id + "/" + foto;
     }
+
 
 
     @Override

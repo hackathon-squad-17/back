@@ -60,12 +60,7 @@ public class PostagemController {
     @CrossOrigin("*")
     public Postagem postagemId(Integer id){
         Optional<Postagem> postagem =  postagemRepository.findById(id);
-        if (postagem.isPresent()){
-            return postagem.get();
-        } else {
-            return new Postagem();
-        }
-
+        return postagem.orElseGet(Postagem::new);
     }
 
     /*

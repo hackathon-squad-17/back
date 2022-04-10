@@ -1,13 +1,16 @@
 package com.fcamara.hackathonbackend.controller;
 
-import com.fcamara.hackathonbackend.model.Habilidade;
+import org.springframework.util.StringUtils;
+import com.fcamara.hackathonbackend.FileUploadUtil;
 import com.fcamara.hackathonbackend.model.Usuario;
 import com.fcamara.hackathonbackend.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.text.Normalizer;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -27,9 +30,17 @@ public class UsuarioController {
     public ResponseEntity<?> adicionarUsuario(@RequestParam String nome,
                                               @RequestParam String login,
                                               @RequestParam String password,
-                                              @RequestParam String email) {
-        Usuario novoUsuario = new Usuario(nome, login, password, email);
-        usuarioRepository.save(novoUsuario);
+                                              @RequestParam String email,
+                                              @RequestParam("image") MultipartFile multipartFile) throws IOException {
+        String nomeArquivo = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+
+        Usuario novoUsuario = new Usuario(nome, login, password, email, nomeArquivo);
+        Usuario usuarioSalvo = usuarioRepository.save(novoUsuario);
+
+        String diretorioUpload = "/usuario-fotos/" + usuarioSalvo.getId();
+
+        FileUploadUtil.saveFile(diretorioUpload, nomeArquivo, multipartFile);
+
         return new ResponseEntity<>(null, HttpStatus.CREATED);
     }
 
@@ -70,12 +81,34 @@ public class UsuarioController {
     }
 
     /*
+        Verifica se usuario e senha informados sao compativeis
+    */
+    @PostMapping(path = "/verificacao-login")
+    public ResponseEntity<?> verificarLogin(@RequestParam String loginOuEmail, @RequestParam String senha) {
+        Usuario usuario;
+        Optional<Usuario> usuarioOptionalEmail = usuarioRepository.findByEmail(loginOuEmail);
+        Optional<Usuario> usuarioOptionalLogin = usuarioRepository.findByLogin(loginOuEmail);
+
+        if (usuarioOptionalEmail.isPresent()) {
+            usuario = usuarioOptionalEmail.get();
+        } else if (usuarioOptionalLogin.isPresent()) {
+            usuario = usuarioOptionalLogin.get();
+        } else
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Usuário não encontrado.");
+
+        String usuarioSenha = usuario.getPassword();
+
+        if (Objects.equals(usuarioSenha, senha))
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Efetuando login...");
+        else
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Senha incorreta.");
+    }
+
+    /*
         Lista todos os usuarios cadastrados
     */
     @GetMapping(path = "/todos-usuarios")
-    public List<Usuario> listarUsuarios() {
-        return usuarioRepository.findAll();
-    }
+    public List<Usuario> listarUsuarios() { return usuarioRepository.findAll(); }
 
     /*
         Lista todos os usuarios de uma area especificada
