@@ -46,12 +46,12 @@ public class Usuario {
     /* ------------------- Construtores ------------------- */
     public Usuario() {}
 
-    public Usuario(String nome, String login, String password, String email, String foto) {
+    public Usuario(String nome, String login, String password, String email) {
         this.nome = nome;
         this.login = login;
         this.password = password;
         this.email = email;
-        this.foto = foto;
+        this.foto = null;
     }
     /* ---------------------------------------------------- */
 
@@ -107,6 +107,10 @@ public class Usuario {
 
     public void setHabilidades(List<String> habilidades) {
         this.habilidades = habilidades;
+    }
+
+    public void setFoto(String foto) {
+        this.foto = foto;
     }
 
     @Transient

@@ -1,5 +1,8 @@
 package com.fcamara.hackathonbackend.controller;
 
+import com.fcamara.hackathonbackend.model.AreaAtuacaoForm;
+import com.fcamara.hackathonbackend.model.CadastroForm;
+import com.fcamara.hackathonbackend.model.LoginForm;
 import org.springframework.util.StringUtils;
 import com.fcamara.hackathonbackend.FileUploadUtil;
 import com.fcamara.hackathonbackend.model.Usuario;
@@ -27,34 +30,51 @@ public class UsuarioController {
     */
     @PostMapping("/novo-usuario")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> adicionarUsuario(@RequestParam String nome,
-                                              @RequestParam String login,
-                                              @RequestParam String password,
-                                              @RequestParam String email,
-                                              @RequestParam("image") MultipartFile multipartFile) throws IOException {
-        String nomeArquivo = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+    @CrossOrigin("*")
+    public ResponseEntity<?> adicionarUsuario(@RequestBody CadastroForm cadastroForm) throws IOException {
+        // String nomeArquivo = StringUtils.cleanPath(cadastroForm.getImage().getOriginalFilename());
 
-        Usuario novoUsuario = new Usuario(nome, login, password, email, nomeArquivo);
+        Usuario novoUsuario = new Usuario(cadastroForm.getNome(), cadastroForm.getLogin(), cadastroForm.getPassword(), cadastroForm.getEmail());
         Usuario usuarioSalvo = usuarioRepository.save(novoUsuario);
 
-        String diretorioUpload = "/usuario-fotos/" + usuarioSalvo.getId();
+        /* String diretorioUpload = "/usuario-fotos/" + usuarioSalvo.getId();
 
-        FileUploadUtil.saveFile(diretorioUpload, nomeArquivo, multipartFile);
+        FileUploadUtil.saveFile(diretorioUpload, nomeArquivo, cadastroForm.getImage()); */
 
         return new ResponseEntity<>(null, HttpStatus.CREATED);
     }
+
+    @PostMapping("/upload-foto")
+    @CrossOrigin("*")
+    public ResponseEntity<?> salvarFoto(@RequestParam String usuarioLogin,
+                                        @RequestParam("image") MultipartFile multipartFile) throws IOException {
+
+        String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+        Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioLogin);
+        if (usuarioOptional.isPresent()) {
+            Usuario usuario = usuarioOptional.get();
+            usuario.setFoto(fileName);
+            usuarioRepository.save(usuario);
+
+            String uploadDir = "user-photos/" + usuario.getId();
+            FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
+            return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
+    } else
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
 
     /*
         Insere area de atuacao para um usuario especificado
     */
     @PostMapping(path = "/nova-area-atuacao")
-    public ResponseEntity<?> adicionarAreaAtuacao(@RequestParam int idUsuario,
-                                                  @RequestParam String areaAtuacao) {
-        Optional<Usuario> usuarioOptional = usuarioRepository.findById(idUsuario);
+    @CrossOrigin("*")
+    public ResponseEntity<?> adicionarAreaAtuacao(@RequestBody AreaAtuacaoForm areaAtuacaoForm) {
+        Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(areaAtuacaoForm.getLogin());
 
         if (usuarioOptional.isPresent()) {
             Usuario usuario = usuarioOptional.get();
-            usuario.setAreaAtuacao(areaAtuacao);
+            usuario.setAreaAtuacao(areaAtuacaoForm.getAreaAtuacao());
             usuarioRepository.save(usuario);
 
             return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
@@ -84,10 +104,11 @@ public class UsuarioController {
         Verifica se usuario e senha informados sao compativeis
     */
     @PostMapping(path = "/verificacao-login")
-    public ResponseEntity<?> verificarLogin(@RequestParam String loginOuEmail, @RequestParam String senha) {
+    @CrossOrigin("*")
+    public ResponseEntity<?> verificarLogin(@RequestBody LoginForm loginForm) {
         Usuario usuario;
-        Optional<Usuario> usuarioOptionalEmail = usuarioRepository.findByEmail(loginOuEmail);
-        Optional<Usuario> usuarioOptionalLogin = usuarioRepository.findByLogin(loginOuEmail);
+        Optional<Usuario> usuarioOptionalEmail = usuarioRepository.findByEmail(loginForm.getLoginOuEmail());
+        Optional<Usuario> usuarioOptionalLogin = usuarioRepository.findByLogin(loginForm.getLoginOuEmail());
 
         if (usuarioOptionalEmail.isPresent()) {
             usuario = usuarioOptionalEmail.get();
@@ -98,8 +119,8 @@ public class UsuarioController {
 
         String usuarioSenha = usuario.getPassword();
 
-        if (Objects.equals(usuarioSenha, senha))
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Efetuando login...");
+        if (Objects.equals(usuarioSenha, loginForm.getSenha()))
+            return ResponseEntity.status(HttpStatus.OK).body(usuario.getLogin());
         else
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Senha incorreta.");
     }
