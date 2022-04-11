@@ -1,9 +1,13 @@
 package com.fcamara.hackathonbackend.model;
 
 public class AreaAtuacaoForm {
+    /* ------------------- Propriedades ------------------- */
     private String login;
     private String areaAtuacao;
+    /* ---------------------------------------------------- */
 
+
+    /* ------------ Métodos de acessibilidade ------------- */
     public String getLogin() {
         return login;
     }
@@ -19,4 +23,5 @@ public class AreaAtuacaoForm {
     public void setAreaAtuacao(String areaAtuacao) {
         this.areaAtuacao = areaAtuacao;
     }
+    /* ---------------------------------------------------- */
 }

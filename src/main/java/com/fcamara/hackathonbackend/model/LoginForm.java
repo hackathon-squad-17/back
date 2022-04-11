@@ -1,9 +1,13 @@
 package com.fcamara.hackathonbackend.model;
 
 public class LoginForm {
+    /* ------------------- Propriedades ------------------- */
     private String loginOuEmail;
     private String senha;
+    /* ---------------------------------------------------- */
 
+
+    /* ------------ Métodos de acessibilidade ------------- */
     public String getLoginOuEmail() {
         return loginOuEmail;
     }
@@ -19,4 +23,5 @@ public class LoginForm {
     public void setSenha(String senha) {
         this.senha = senha;
     }
+    /* ---------------------------------------------------- */
 }

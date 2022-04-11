@@ -1,16 +1,19 @@
 package com.fcamara.hackathonbackend.controller;
 
 import com.fcamara.hackathonbackend.model.*;
-import org.springframework.util.StringUtils;
 import com.fcamara.hackathonbackend.FileUploadUtil;
 import com.fcamara.hackathonbackend.repository.UsuarioRepository;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.Normalizer;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -31,7 +34,13 @@ public class UsuarioController {
     public ResponseEntity<?> adicionarUsuario(@RequestBody CadastroForm cadastroForm) throws IOException {
         // String nomeArquivo = StringUtils.cleanPath(cadastroForm.getImage().getOriginalFilename());
 
-        Usuario novoUsuario = new Usuario(cadastroForm.getNome(), cadastroForm.getLogin(), cadastroForm.getPassword(), cadastroForm.getEmail());
+        Usuario novoUsuario = new Usuario(
+                cadastroForm.getNome(),
+                cadastroForm.getLogin(),
+                cadastroForm.getPassword(),
+                cadastroForm.getEmail(),
+                cadastroForm.getSobreMim()
+        );
         Usuario usuarioSalvo = usuarioRepository.save(novoUsuario);
 
         /* String diretorioUpload = "/usuario-fotos/" + usuarioSalvo.getId();
@@ -41,11 +50,13 @@ public class UsuarioController {
         return new ResponseEntity<>(null, HttpStatus.CREATED);
     }
 
+    /*
+        Faz o armazenamento da foto de usuário quando o upload eh feito no site
+    */
     @PostMapping("/upload-foto")
     @CrossOrigin("*")
     public ResponseEntity<?> salvarFoto(@RequestParam String usuarioLogin,
                                         @RequestParam("image") MultipartFile multipartFile) throws IOException {
-
         String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
         Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioLogin);
         if (usuarioOptional.isPresent()) {
@@ -56,10 +67,9 @@ public class UsuarioController {
             String uploadDir = "user-photos/" + usuario.getId();
             FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
             return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
-    } else
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        } else
+                return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
 
     /*
         Insere area de atuacao para um usuario especificado
@@ -189,5 +199,21 @@ public class UsuarioController {
         });
 
         return sugestoes;
+    }
+
+    /*
+        Retorna a imagem de perfil do usuario para ser carregada na pagina
+    */
+    @GetMapping(
+            path = "/download-foto",
+            produces = MediaType.IMAGE_JPEG_VALUE
+    )
+    public @ResponseBody byte[] carregarImagem() throws IOException {
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("imagens/perfil-teste.jpg");
+
+        if (inputStream == null)
+            return null;
+
+        return IOUtils.toByteArray(inputStream);
     }
 }

@@ -1,10 +1,8 @@
 package com.fcamara.hackathonbackend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
-import java.sql.Blob;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,6 +35,9 @@ public class Usuario {
     @Column //(name = "foto_de_perfil")
     private String foto;
 
+    @Column //(name = "sobre_mim")
+    private String sobreMim;
+
     // @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     // @JsonManagedReference
     // private List<Postagem> postagens;
@@ -46,12 +47,13 @@ public class Usuario {
     /* ------------------- Construtores ------------------- */
     public Usuario() {}
 
-    public Usuario(String nome, String login, String password, String email) {
+    public Usuario(String nome, String login, String password, String email, String sobreMim) {
         this.nome = nome;
         this.login = login;
         this.password = password;
         this.email = email;
         this.foto = null;
+        this.sobreMim = sobreMim;
     }
     /* ---------------------------------------------------- */
 
@@ -113,6 +115,14 @@ public class Usuario {
         this.foto = foto;
     }
 
+    public String getSobreMim() {
+        return sobreMim;
+    }
+
+    public void setSobreMim(String sobreMim) {
+        this.sobreMim = sobreMim;
+    }
+
     @Transient
     public String getFotosCaminhoImagem() {
         if (foto == null || id == 0)
@@ -120,8 +130,6 @@ public class Usuario {
 
         return "/usuario-fotos" + id + "/" + foto;
     }
-
-
 
     @Override
     public boolean equals(Object o) {

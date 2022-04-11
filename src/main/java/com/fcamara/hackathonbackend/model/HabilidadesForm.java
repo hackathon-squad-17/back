@@ -3,9 +3,13 @@ package com.fcamara.hackathonbackend.model;
 import java.util.List;
 
 public class HabilidadesForm {
+    /* ------------------- Propriedades ------------------- */
     private String login;
     private List<String> habilidades;
+    /* ---------------------------------------------------- */
 
+
+    /* ------------ Métodos de acessibilidade ------------- */
     public String getLogin() {
         return login;
     }
@@ -21,4 +25,5 @@ public class HabilidadesForm {
     public void setHabilidades(List<String> habilidades) {
         this.habilidades = habilidades;
     }
+    /* ---------------------------------------------------- */
 }

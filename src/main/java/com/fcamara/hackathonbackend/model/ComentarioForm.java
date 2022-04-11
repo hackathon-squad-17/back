@@ -1,10 +1,14 @@
 package com.fcamara.hackathonbackend.model;
 
 public class ComentarioForm {
+    /* ------------------- Propriedades ------------------- */
     private String login;
     private String conteudo;
     private Integer idPost;
+    /* ---------------------------------------------------- */
 
+
+    /* ------------ Métodos de acessibilidade ------------- */
     public String getLogin() {
         return login;
     }
@@ -28,4 +32,5 @@ public class ComentarioForm {
     public void setIdPost(Integer idPost) {
         this.idPost = idPost;
     }
+    /* ---------------------------------------------------- */
 }

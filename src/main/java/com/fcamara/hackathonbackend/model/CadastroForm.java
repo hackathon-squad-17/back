@@ -1,14 +1,16 @@
 package com.fcamara.hackathonbackend.model;
 
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-
 public class CadastroForm {
+    /* ------------------- Propriedades ------------------- */
     private String nome;
     private String login;
     private String password;
     private String email;
+    private String sobreMim;
+    /* ---------------------------------------------------- */
 
+
+    /* ------------ Métodos de acessibilidade ------------- */
     public String getNome() {
         return nome;
     }
@@ -41,4 +43,12 @@ public class CadastroForm {
         this.email = email;
     }
 
+    public String getSobreMim() {
+        return sobreMim;
+    }
+
+    public void setSobreMim(String sobreMim) {
+        this.sobreMim = sobreMim;
+    }
+    /* ---------------------------------------------------- */
 }

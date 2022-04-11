@@ -19,6 +19,9 @@ public class Postagem {
     @Column(nullable = false, name = "titulo")
     private String titulo;
 
+    @Column(nullable = false)
+    private String categoria;
+
     @Column(nullable = false, name = "conteudo")
     private String conteudoPostagem;
 
@@ -34,9 +37,14 @@ public class Postagem {
     /* ------------------- Construtores ------------------- */
     public Postagem() {}
 
-    public Postagem(Usuario usuario, String titulo, String conteudoPostagem, String dataCriacaoPostagem) {
+    public Postagem(Usuario usuario,
+                    String titulo,
+                    String categoria,
+                    String conteudoPostagem,
+                    String dataCriacaoPostagem) {
         this.usuario = usuario;
         this.titulo = titulo;
+        this.categoria = categoria;
         this.conteudoPostagem = conteudoPostagem;
         this.dataCriacaoPostagem = dataCriacaoPostagem;
     }
@@ -58,6 +66,14 @@ public class Postagem {
 
     public void setTitulo(String titulo) {
         this.titulo = titulo;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
     }
 
     public String getConteudo() {

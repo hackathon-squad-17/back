@@ -39,7 +39,13 @@ public class PostagemController {
             String dataDeHoje = dateFormat.format(today);
             System.out.println(dataDeHoje);
 
-            Postagem novaPostagem = new Postagem(usuarioReferente.get(), postagemForm.getTitulo(), postagemForm.getConteudo(), dataDeHoje);
+            Postagem novaPostagem = new Postagem(
+                    usuarioReferente.get(),
+                    postagemForm.getTitulo(),
+                    postagemForm.getCategoria(),
+                    postagemForm.getConteudo(),
+                    dataDeHoje
+            );
             postagemRepository.save(novaPostagem);
 
             return new ResponseEntity<>(null, HttpStatus.CREATED);
@@ -127,5 +133,12 @@ public class PostagemController {
         return postagensEncontradas;
     }
 
+    /*
+        Busca postagens de acordo com a categoria inserida
+    */
+    public List<Postagem> buscarPostagemPorCategoria(@RequestParam String categoria) {
+        Optional<List<Postagem>> optionalPostagem = postagemRepository.findByCategoria(categoria);
 
+        return optionalPostagem.orElse(Collections.emptyList());
+    }
 }
