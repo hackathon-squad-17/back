@@ -3,11 +3,14 @@ package com.fcamara.hackathonbackend.controller;
 import com.fcamara.hackathonbackend.model.*;
 import com.fcamara.hackathonbackend.FileUploadUtil;
 import com.fcamara.hackathonbackend.repository.UsuarioRepository;
-import org.apache.commons.io.IOUtils;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.PathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -64,7 +67,7 @@ public class UsuarioController {
             usuario.setFoto(fileName);
             usuarioRepository.save(usuario);
 
-            String uploadDir = "user-photos/" + usuario.getId();
+            String uploadDir = "user-photos/" + usuario.getLogin();
             FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
             return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
         } else
@@ -136,7 +139,17 @@ public class UsuarioController {
         Lista todos os usuarios cadastrados
     */
     @GetMapping(path = "/todos-usuarios")
+    @CrossOrigin("*")
     public List<Usuario> listarUsuarios() { return usuarioRepository.findAll(); }
+
+    /*
+           Encontra usuario pelo login
+       */
+    @GetMapping(path = "/encontra-usuario-login")
+    @CrossOrigin("*")
+    public Optional<Usuario> encontrarUsuario(String login) {
+        return usuarioRepository.findByLogin(login);
+    }
 
     /*
         Lista todos os usuarios de uma area especificada
@@ -204,16 +217,32 @@ public class UsuarioController {
     /*
         Retorna a imagem de perfil do usuario para ser carregada na pagina
     */
+
+    /*
     @GetMapping(
             path = "/download-foto",
             produces = MediaType.IMAGE_JPEG_VALUE
     )
-    public @ResponseBody byte[] carregarImagem() throws IOException {
+  public @ResponseBody byte[] carregarImagem() throws IOException {
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("imagens/perfil-teste.jpg");
 
         if (inputStream == null)
             return null;
 
         return IOUtils.toByteArray(inputStream);
+    } */
+
+    @RequestMapping(value = "/foto-perfil", method = RequestMethod.GET,
+            produces = MediaType.IMAGE_JPEG_VALUE)
+    @CrossOrigin("*")
+    public ResponseEntity<byte[]> getImage(@RequestParam String path, String login) throws IOException {
+
+        var imgFile = new PathResource("user-photos/" + login + "/" + path);
+        byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
+
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(bytes);
     }
 }
