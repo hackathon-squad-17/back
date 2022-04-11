@@ -235,14 +235,26 @@ public class UsuarioController {
     @RequestMapping(value = "/foto-perfil", method = RequestMethod.GET,
             produces = MediaType.IMAGE_JPEG_VALUE)
     @CrossOrigin("*")
-    public ResponseEntity<byte[]> getImage(@RequestParam String path, String login) throws IOException {
-
-        var imgFile = new PathResource("user-photos/" + login + "/" + path);
-        byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
-
-        return ResponseEntity
-                .ok()
-                .contentType(MediaType.IMAGE_JPEG)
-                .body(bytes);
+    public ResponseEntity<byte[]> getImage(@RequestParam String login) throws IOException {
+        Optional<Usuario> usuario = usuarioRepository.findByLogin(login);
+        if(usuario.isPresent()) {
+            String nomeDoArquivo = usuario.get().getFoto();
+           if(nomeDoArquivo == null){
+               var imgFile = new PathResource("user-photos/default-profile-pic.jpg");
+               byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
+               return ResponseEntity
+                       .ok()
+                       .contentType(MediaType.IMAGE_JPEG)
+                       .body(bytes);
+           } else {
+               var imgFile = new PathResource("user-photos/" + login + "/" + nomeDoArquivo);
+               byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
+               return ResponseEntity
+                       .ok()
+                       .contentType(MediaType.IMAGE_JPEG)
+                       .body(bytes);
+           }
+        }
+        return (ResponseEntity<byte[]>) ResponseEntity.status(HttpStatus.NOT_FOUND);
     }
 }

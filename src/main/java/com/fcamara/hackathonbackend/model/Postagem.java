@@ -19,7 +19,7 @@ public class Postagem {
     @Column(nullable = false, name = "titulo")
     private String titulo;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String categoria;
 
     @Column(nullable = false, name = "conteudo")

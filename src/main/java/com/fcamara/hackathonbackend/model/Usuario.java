@@ -123,6 +123,10 @@ public class Usuario {
         this.sobreMim = sobreMim;
     }
 
+    public String getFoto() {
+        return foto;
+    }
+
     @Transient
     public String getFotosCaminhoImagem() {
         if (foto == null || id == 0)
