@@ -1,11 +1,8 @@
 package com.fcamara.hackathonbackend.controller;
 
-import com.fcamara.hackathonbackend.model.AreaAtuacaoForm;
-import com.fcamara.hackathonbackend.model.CadastroForm;
-import com.fcamara.hackathonbackend.model.LoginForm;
+import com.fcamara.hackathonbackend.model.*;
 import org.springframework.util.StringUtils;
 import com.fcamara.hackathonbackend.FileUploadUtil;
-import com.fcamara.hackathonbackend.model.Usuario;
 import com.fcamara.hackathonbackend.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -85,14 +82,14 @@ public class UsuarioController {
     /*
         Insere habilidade para um usuario especificado
     */
-    @PostMapping(path = "/nova-habilidade")
-    public ResponseEntity<?> adicionarHabilidade(@RequestParam int idUsuario,
-                                                 @RequestParam String habilidade) {
-        Optional<Usuario> usuarioOptional = usuarioRepository.findById(idUsuario);
+    @PostMapping(path = "/novas-habilidades")
+    @CrossOrigin("*")
+    public ResponseEntity<?> adicionarHabilidade(@RequestBody HabilidadesForm habilidadesForm) {
+        Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(habilidadesForm.getLogin());
 
         if (usuarioOptional.isPresent()) {
             Usuario usuario = usuarioOptional.get();
-            usuario.setUmaHabilidade(habilidade);
+            usuario.setHabilidades(habilidadesForm.getHabilidades());
             usuarioRepository.save(usuario);
 
             return new ResponseEntity<>(null, HttpStatus.ACCEPTED);

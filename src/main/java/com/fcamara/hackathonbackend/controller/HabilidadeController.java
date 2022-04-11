@@ -3,10 +3,7 @@ package com.fcamara.hackathonbackend.controller;
 import com.fcamara.hackathonbackend.model.Habilidade;
 import com.fcamara.hackathonbackend.repository.HabilidadeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.Normalizer;
 import java.util.ArrayList;
@@ -23,6 +20,7 @@ public class HabilidadeController {
         Lista todas as habilidades existentes
     */
     @GetMapping(path = "/todas-habilidades")
+    @CrossOrigin("*")
     public List<Habilidade> listarHabilidades() {
         return habilidadeRepository.findAll();
     }
