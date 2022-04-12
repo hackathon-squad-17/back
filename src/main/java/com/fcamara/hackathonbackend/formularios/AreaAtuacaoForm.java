@@ -1,4 +1,4 @@
-package com.fcamara.hackathonbackend.model;
+package com.fcamara.hackathonbackend.formularios;
 
 public class AreaAtuacaoForm {
     /* ------------------- Propriedades ------------------- */

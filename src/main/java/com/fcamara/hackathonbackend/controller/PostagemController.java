@@ -1,7 +1,7 @@
 package com.fcamara.hackathonbackend.controller;
 
 import com.fcamara.hackathonbackend.model.Postagem;
-import com.fcamara.hackathonbackend.model.PostagemForm;
+import com.fcamara.hackathonbackend.formularios.PostagemForm;
 import com.fcamara.hackathonbackend.model.Usuario;
 import com.fcamara.hackathonbackend.repository.PostagemRepository;
 import com.fcamara.hackathonbackend.repository.UsuarioRepository;
