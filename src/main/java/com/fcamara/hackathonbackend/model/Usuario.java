@@ -47,13 +47,12 @@ public class Usuario {
     /* ------------------- Construtores ------------------- */
     public Usuario() {}
 
-    public Usuario(String nome, String login, String password, String email, String sobreMim) {
+    public Usuario(String nome, String login, String password, String email) {
         this.nome = nome;
         this.login = login;
         this.password = password;
         this.email = email;
         this.foto = null;
-        this.sobreMim = sobreMim;
     }
     /* ---------------------------------------------------- */
 

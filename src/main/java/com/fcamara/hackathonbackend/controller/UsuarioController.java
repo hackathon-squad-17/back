@@ -1,11 +1,12 @@
 package com.fcamara.hackathonbackend.controller;
 
+import com.fcamara.hackathonbackend.formularios.*;
+import com.fcamara.hackathonbackend.formularios.CadastroForm;
 import com.fcamara.hackathonbackend.model.*;
 import com.fcamara.hackathonbackend.FileUploadUtil;
 import com.fcamara.hackathonbackend.repository.UsuarioRepository;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
+import com.fcamara.hackathonbackend.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.PathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.Normalizer;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 public class UsuarioController {
     @Autowired
     private UsuarioRepository usuarioRepository;
+    private UsuarioService usuarioService;
     private List<String> areasDeAtuacao = Arrays.asList("Front-end", "Back-end", "FullStack", "UX", "UI","UX/UI");
 
     /*
@@ -41,10 +42,10 @@ public class UsuarioController {
                 cadastroForm.getNome(),
                 cadastroForm.getLogin(),
                 cadastroForm.getPassword(),
-                cadastroForm.getEmail(),
-                cadastroForm.getSobreMim()
+                cadastroForm.getEmail()
         );
         Usuario usuarioSalvo = usuarioRepository.save(novoUsuario);
+        //Usuario usuarioSalvo = usuarioService.getUsuarioRepository().save(novoUsuario);
 
         /* String diretorioUpload = "/usuario-fotos/" + usuarioSalvo.getId();
 
@@ -71,7 +72,7 @@ public class UsuarioController {
             FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
             return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
         } else
-                return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /*
@@ -111,6 +112,24 @@ public class UsuarioController {
     }
 
     /*
+        Insere sessão Sobre Mim para um usuario especificado
+    */
+    @PostMapping(path = "/sobre-mim")
+    @CrossOrigin("*")
+    public ResponseEntity<?> adicionarSobreMim(@RequestBody SobreMimForm sobreMimForm) {
+        Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(sobreMimForm.getLogin());
+
+        if (usuarioOptional.isPresent()) {
+            Usuario usuario = usuarioOptional.get();
+            usuario.setSobreMim(sobreMimForm.getSobreMim());
+            usuarioRepository.save(usuario);
+
+            return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
+        } else
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    
+    /*
         Verifica se usuario e senha informados sao compativeis
     */
     @PostMapping(path = "/verificacao-login")
@@ -143,8 +162,8 @@ public class UsuarioController {
     public List<Usuario> listarUsuarios() { return usuarioRepository.findAll(); }
 
     /*
-           Encontra usuario pelo login
-       */
+        Encontra usuario pelo login
+    */
     @GetMapping(path = "/encontra-usuario-login")
     @CrossOrigin("*")
     public Optional<Usuario> encontrarUsuario(String login) {
@@ -160,8 +179,6 @@ public class UsuarioController {
 
         return optionalUsuarios.orElse(Collections.emptyList());
     }
-    /* Acho que nessas buscas nao precisamos colocar tratamento de exception ne? só retornar a lista vazia...
-       talvez colocar uma mensagem no front, que nao sei se precisa ser inserida aqui */
 
     /*
         Busca usuarios por nome especificado
@@ -214,9 +231,7 @@ public class UsuarioController {
         return sugestoes;
     }
 
-    /*
-        Retorna a imagem de perfil do usuario para ser carregada na pagina
-    */
+
 
     /*
     @GetMapping(
@@ -232,29 +247,159 @@ public class UsuarioController {
         return IOUtils.toByteArray(inputStream);
     } */
 
-    @RequestMapping(value = "/foto-perfil", method = RequestMethod.GET,
-            produces = MediaType.IMAGE_JPEG_VALUE)
+    /*
+        Retorna a imagem de perfil do usuario para ser carregada na pagina
+    */
+    @RequestMapping(
+            value = "/foto-perfil",
+            method = RequestMethod.GET,
+            produces = MediaType.IMAGE_JPEG_VALUE
+    )
     @CrossOrigin("*")
-    public ResponseEntity<byte[]> getImage(@RequestParam String login) throws IOException {
+    public ResponseEntity<byte[]> carregarImagem(@RequestParam String login) throws IOException {
         Optional<Usuario> usuario = usuarioRepository.findByLogin(login);
+
         if(usuario.isPresent()) {
             String nomeDoArquivo = usuario.get().getFoto();
-           if(nomeDoArquivo == null){
+            if(nomeDoArquivo == null){
                var imgFile = new PathResource("user-photos/default-profile-pic.jpg");
                byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
-               return ResponseEntity
-                       .ok()
-                       .contentType(MediaType.IMAGE_JPEG)
-                       .body(bytes);
-           } else {
-               var imgFile = new PathResource("user-photos/" + login + "/" + nomeDoArquivo);
-               byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
-               return ResponseEntity
-                       .ok()
-                       .contentType(MediaType.IMAGE_JPEG)
-                       .body(bytes);
-           }
+
+               return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(bytes);
+            } else {
+                var imgFile = new PathResource("user-photos/" + login + "/" + nomeDoArquivo);
+                byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
+
+                return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(bytes);
+            }
         }
+
         return (ResponseEntity<byte[]>) ResponseEntity.status(HttpStatus.NOT_FOUND);
     }
+
+    /*
+        Permite que o nome do usuario seja editado
+    */
+    @PutMapping(path = "/edita-nome-usuario")
+    @CrossOrigin("*")
+    public ResponseEntity<?> editarNomeUsuario(@RequestBody UsuarioForm usuarioForm,
+                                               @RequestParam String novoNome) {
+        Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioForm.getLogin());
+
+        if (usuarioOptional.isPresent()) {
+            Usuario usuario = usuarioOptional.get();
+            usuario.setNome(novoNome);
+            usuarioRepository.save(usuario);
+
+            return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
+        } else
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /*
+        Permite que o login do usuario seja editado
+    */
+    @PutMapping(path = "/edita-login-usuario")
+    @CrossOrigin("*")
+    public ResponseEntity<?> editarLoginUsuario(@RequestBody UsuarioForm usuarioForm,
+                                                @RequestParam String novoLogin) {
+        Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioForm.getLogin());
+
+        if (usuarioOptional.isPresent()) {
+            Optional<Usuario> usuarioOptionalValidacao = usuarioRepository.findByLogin(novoLogin);
+
+            if (usuarioOptionalValidacao.isPresent())
+                return new ResponseEntity<>(null, HttpStatus.CONFLICT);
+            else {
+                Usuario usuario = usuarioOptional.get();
+                usuario.setLogin(novoLogin);
+                usuarioRepository.save(usuario);
+
+                return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
+            }
+        } else
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /*
+        Permite que a senha do usuario seja editada
+    */
+    @PutMapping(path = "/edita-senha-usuario")
+    public ResponseEntity<?> editarSenhaUsuario(@RequestBody UsuarioForm usuarioForm,
+                                                @RequestParam String novaSenha) {
+        Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioForm.getLogin());
+
+        if (usuarioOptional.isPresent()) {
+            Usuario usuario = usuarioOptional.get();
+            usuario.setPassword(novaSenha);
+            usuarioRepository.save(usuario);
+
+            return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
+        }
+        else
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /*
+        Permite que o email do usuario seja editado
+    */
+    @PutMapping(path = "/edita-email-usuario")
+    public ResponseEntity<?> editarEmailUsuario(@RequestBody UsuarioForm usuarioForm,
+                                                @RequestParam String novoEmail) {
+        Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioForm.getLogin());
+
+        if (usuarioOptional.isPresent()) {
+            Optional<Usuario> usuarioOptionalValidacao = usuarioRepository.findByEmail(novoEmail);
+
+            if (usuarioOptionalValidacao.isPresent())
+                return new ResponseEntity<>(null, HttpStatus.CONFLICT);
+            else {
+                Usuario usuario = usuarioOptional.get();
+                usuario.setEmail(novoEmail);
+                usuarioRepository.save(usuario);
+
+                return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
+            }
+        } else
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /*
+        Permite que a Area de Atuacao do usuario seja editada
+    */
+    @PutMapping(path = "/edita-area-atuacao-usuario")
+    public ResponseEntity<?> editarAreaAtuacaoUsuario(@RequestBody UsuarioForm usuarioForm,
+                                                      @RequestParam String novaAreaAtuacao) {
+        Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioForm.getLogin());
+
+        if (usuarioOptional.isPresent()) {
+            Usuario usuario = usuarioOptional.get();
+            usuario.setAreaAtuacao(novaAreaAtuacao);
+            usuarioRepository.save(usuario);
+
+            return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
+        } else
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /*
+        Permite que o Sobre Mim do usuario seja editado
+    */
+    @PutMapping(path = "/edita-sobre-mim-usuario")
+    public ResponseEntity<?> editarSobreMimUsuario(@RequestBody UsuarioForm usuarioForm,
+                                                   @RequestParam String novoSobreMim) {
+        Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioForm.getLogin());
+
+        if (usuarioOptional.isPresent()) {
+            Usuario usuario = usuarioOptional.get();
+            usuario.setSobreMim(novoSobreMim);
+            usuarioRepository.save(usuario);
+
+            return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
+        }
+        else
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+
 }
