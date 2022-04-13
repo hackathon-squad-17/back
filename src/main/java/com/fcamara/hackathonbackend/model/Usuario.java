@@ -35,6 +35,7 @@ public class Usuario {
 
     @Lob
     @Type(type = "org.hibernate.type.ImageType")
+    @JsonIgnore
     private byte[] foto;
 
     @Column //(name = "sobre_mim")
