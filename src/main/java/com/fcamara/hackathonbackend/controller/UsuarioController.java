@@ -64,11 +64,9 @@ public class UsuarioController {
         Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioLogin);
         if (usuarioOptional.isPresent()) {
             Usuario usuario = usuarioOptional.get();
-            usuario.setFoto(fileName);
+            usuario.setFoto(multipartFile.getBytes());
             usuarioRepository.save(usuario);
 
-            String uploadDir = "user-photos/" + usuario.getLogin();
-            FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
             return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
         } else
                 return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -238,21 +236,19 @@ public class UsuarioController {
     public ResponseEntity<byte[]> getImage(@RequestParam String login) throws IOException {
         Optional<Usuario> usuario = usuarioRepository.findByLogin(login);
         if(usuario.isPresent()) {
-            String nomeDoArquivo = usuario.get().getFoto();
-           if(nomeDoArquivo == null){
-               var imgFile = new PathResource("user-photos/default-profile-pic.jpg");
+            byte[] imgBytes = usuario.get().getFoto();
+           if(imgBytes == null){
+               var imgFile = new PathResource("src/main/resources/imagens/perfil-teste.jpg");
                byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
                return ResponseEntity
                        .ok()
                        .contentType(MediaType.IMAGE_JPEG)
                        .body(bytes);
            } else {
-               var imgFile = new PathResource("user-photos/" + login + "/" + nomeDoArquivo);
-               byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
                return ResponseEntity
                        .ok()
                        .contentType(MediaType.IMAGE_JPEG)
-                       .body(bytes);
+                       .body(imgBytes);
            }
         }
         return (ResponseEntity<byte[]>) ResponseEntity.status(HttpStatus.NOT_FOUND);
