@@ -49,9 +49,9 @@ public class PostagemController {
 
             postagemService.salvarPostagem(novaPostagem);
 
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Postagem criada com sucesso.");
+            return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
         } else
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Usuário não encontrado");
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 
         /*Optional<Usuario> usuarioReferente = usuarioRepository.findByLogin(postagemForm.getLogin());
         if(usuarioReferente.isPresent()){

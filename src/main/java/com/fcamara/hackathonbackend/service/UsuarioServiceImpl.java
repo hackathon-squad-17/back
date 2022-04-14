@@ -40,7 +40,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         );
         usuarioRepository.save(novoUsuario);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body("Usuário criado com sucesso.");
+        return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
     }
 
     @Transactional

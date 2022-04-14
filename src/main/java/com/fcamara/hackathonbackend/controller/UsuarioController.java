@@ -68,9 +68,9 @@ public class UsuarioController {
             usuario.setFoto(multipartFile.getBytes());
             usuarioService.salvarUsuario(usuario);
 
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Foto salva com sucesso.");
+            return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
         } else
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Usuário não encontrado.");
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
     // Método implementado ANTES
@@ -100,9 +100,9 @@ public class UsuarioController {
             usuario.setAreaAtuacao(areaAtuacaoForm.getAreaAtuacao());
             usuarioService.salvarUsuario(usuario);
 
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Área de atuação adicionada com sucesso.");
+            return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
         } else
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Usuário não encontrado.");
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 
         /*Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(areaAtuacaoForm.getLogin());
         if (usuarioOptional.isPresent()) {
@@ -127,9 +127,9 @@ public class UsuarioController {
             usuario.setHabilidades(habilidadesForm.getHabilidades());
             usuarioService.salvarUsuario(usuario);
 
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Habilidade adicionada com sucesso.");
+            return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
         } else
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Usuário não encontrado.");
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 
         /*Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(habilidadesForm.getLogin());
         if (usuarioOptional.isPresent()) {
@@ -156,7 +156,7 @@ public class UsuarioController {
 
             return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
         } else
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Usuário não encontrado.");
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 
         /*Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(sobreMimForm.getLogin());
         if (usuarioOptional.isPresent()) {
@@ -184,7 +184,7 @@ public class UsuarioController {
         else if (usuarioEmail != null)
             usuario = usuarioEmail;
         else
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Usuário não encontrado.");
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 
         String usuarioSenha = usuario.getPassword();
 
@@ -334,7 +334,7 @@ public class UsuarioController {
             } else
                 return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imgBytes);
         } else
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Imagem não encontrada.");
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
     // Método implementado ANTES
@@ -374,7 +374,7 @@ public class UsuarioController {
 
             return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
         } else
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Usuário não encontrado.");
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 
         /*Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioForm.getLogin());
         if (usuarioOptional.isPresent()) {
@@ -398,15 +398,15 @@ public class UsuarioController {
 
         if (usuario != null) {
             if (usuarioService.verificarExistenciaDeLogin(novoLogin))
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("Login já existente.");
+                return new ResponseEntity<>(null, HttpStatus.CONFLICT);
             else {
                 usuario.setLogin(novoLogin);
                 usuarioService.salvarUsuario(usuario);
 
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body("Login modificado com sucesso.");
+                return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
             }
         } else
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Usuário não encontrado.");
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 
         /*Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioForm.getLogin());
         if (usuarioOptional.isPresent()) {
@@ -437,9 +437,9 @@ public class UsuarioController {
             usuario.setPassword(novaSenha);
             usuarioService.salvarUsuario(usuario);
 
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Senha modificada com sucesso.");
+            return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
         } else
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Usuário não encontrado.");
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 
         /*Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioForm.getLogin());
         if (usuarioOptional.isPresent()) {
@@ -463,15 +463,15 @@ public class UsuarioController {
 
         if (usuario != null) {
             if (usuarioService.verificarExistenciaDeEmail(novoEmail))
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("Login já existente.");
+                return new ResponseEntity<>(null, HttpStatus.CONFLICT);
             else {
                 usuario.setEmail(novoEmail);
                 usuarioService.salvarUsuario(usuario);
 
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body("Email modificado com sucesso.");
+                return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
             }
         } else
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Usuário não encontrado.");
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 
         /*Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioForm.getLogin());
         if (usuarioOptional.isPresent()) {
@@ -502,9 +502,9 @@ public class UsuarioController {
             usuario.setAreaAtuacao(novaAreaAtuacao);
             usuarioService.salvarUsuario(usuario);
 
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Área de atuação modificada com sucesso.");
+            return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
         } else
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Usuário não encontrado.");
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 
         /*Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioForm.getLogin());
         if (usuarioOptional.isPresent()) {
@@ -529,9 +529,9 @@ public class UsuarioController {
             usuario.setSobreMim(novoSobreMim);
             usuarioService.salvarUsuario(usuario);
 
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Campo alterado com sucesso.");
+            return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
         } else
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Usuário não encontrado");
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 
         /*Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioForm.getLogin());
         if (usuarioOptional.isPresent()) {

@@ -43,10 +43,9 @@ public class ComentarioServiceImpl implements ComentarioService {
             );
             comentarioRepository.save(novoComentario);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body("Comentário criado com sucesso.");
+            return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
         } else
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Usuário ou postagem não encontrado(a).");
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
     @Transactional
