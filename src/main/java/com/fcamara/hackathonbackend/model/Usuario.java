@@ -127,13 +127,6 @@ public class Usuario {
         return foto;
     }
 
-    @Transient
-    public String getFotosCaminhoImagem() {
-        if (foto == null || id == 0)
-            return null;
-
-        return "/usuario-fotos" + id + "/" + foto;
-    }
 
     @Override
     public boolean equals(Object o) {
