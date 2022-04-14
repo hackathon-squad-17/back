@@ -21,7 +21,7 @@ public class Comentario {
     // @JsonIgnore
     private Usuario usuario;
 
-    @Column(nullable = false, name = "conteudo")
+    @Column(nullable = false, name = "conteudo", length = 1000)
     private String conteudoComentario;
 
     @Column(nullable = true, name = "data_de_criacao")

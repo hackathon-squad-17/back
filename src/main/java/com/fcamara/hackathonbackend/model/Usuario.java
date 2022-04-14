@@ -1,6 +1,7 @@
 package com.fcamara.hackathonbackend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.List;
@@ -32,10 +33,12 @@ public class Usuario {
     @ElementCollection
     private List<String> habilidades;
 
-    @Column //(name = "foto_de_perfil")
-    private String foto;
+    @Lob
+    @Type(type = "org.hibernate.type.ImageType")
+    @JsonIgnore
+    private byte[] foto;
 
-    @Column //(name = "sobre_mim")
+    @Column (name = "sobre_mim", length = 1000)
     private String sobreMim;
 
     // @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -110,7 +113,7 @@ public class Usuario {
         this.habilidades = habilidades;
     }
 
-    public void setFoto(String foto) {
+    public void setFoto(byte[] foto) {
         this.foto = foto;
     }
 
@@ -122,7 +125,7 @@ public class Usuario {
         this.sobreMim = sobreMim;
     }
 
-    public String getFoto() {
+    public byte[] getFoto() {
         return foto;
     }
 

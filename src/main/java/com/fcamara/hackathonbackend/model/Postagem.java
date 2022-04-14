@@ -22,7 +22,7 @@ public class Postagem {
     @Column(nullable = true)
     private String categoria;
 
-    @Column(nullable = false, name = "conteudo")
+    @Column(nullable = false, name = "conteudo", length = 1000)
     private String conteudoPostagem;
 
     @Column(nullable = true, name = "data_de_criacao")

@@ -2,13 +2,16 @@ package com.fcamara.hackathonbackend.controller;
 
 import com.fcamara.hackathonbackend.formularios.*;
 import com.fcamara.hackathonbackend.formularios.CadastroForm;
+import com.fcamara.hackathonbackend.formularios.UsuarioForm;
 import com.fcamara.hackathonbackend.model.*;
-import com.fcamara.hackathonbackend.FileUploadUtil;
+import com.fcamara.hackathonbackend.repository.UsuarioRepository;
 import com.fcamara.hackathonbackend.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.PathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,8 +22,8 @@ import java.util.*;
 @RestController
 @RequestMapping(path = "/usuarios")
 public class UsuarioController {
-    //@Autowired
-    //private UsuarioRepository usuarioRepository;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
     @Autowired
     private UsuarioService usuarioService;
     private final List<String> areasDeAtuacao = Arrays.asList("Front-end", "Back-end", "FullStack", "UX", "UI","UX/UI");
@@ -42,9 +45,9 @@ public class UsuarioController {
         );
         usuarioService.salvarUsuario(novoUsuario);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body("Usuário criado com sucesso.");*/
+        return ResponseEntity.status(HttpStatus.CREATED).body("Usuário criado com sucesso.");
 
-        /*String nomeArquivo = StringUtils.cleanPath(cadastroForm.getImage().getOriginalFilename());
+        String nomeArquivo = StringUtils.cleanPath(cadastroForm.getImage().getOriginalFilename());
         Usuario usuarioSalvo = usuarioRepository.save(novoUsuario);
         String diretorioUpload = "/usuario-fotos/" + usuarioSalvo.getId();
 
@@ -59,32 +62,31 @@ public class UsuarioController {
     public ResponseEntity<?> salvarFoto(@RequestParam String usuarioLogin,
                                         @RequestParam("image") MultipartFile multipartFile) throws IOException {
         String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
-
         Usuario usuario = usuarioService.acessarUsuarioPorLogin(usuarioLogin);
 
         if (usuario != null) {
-            usuario.setFoto(fileName);
+            usuario.setFoto(multipartFile.getBytes());
             usuarioService.salvarUsuario(usuario);
 
-            String uploadDir = "user-photos/" + usuario.getLogin();
-            FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Foto salva com sucesso.");
+        } else
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Usuário não encontrado.");
+    }
+
+    // Método implementado ANTES
+    /*public ResponseEntity<?> salvarFoto(@RequestParam String usuarioLogin,
+                                       @RequestParam("image") MultipartFile multipartFile) throws IOException {
+        String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+        Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioLogin);
+        if (usuarioOptional.isPresent()) {
+            Usuario usuario = usuarioOptional.get();
+            usuario.setFoto(multipartFile.getBytes());
+            usuarioRepository.save(usuario);
 
             return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
         } else
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-
-        /*Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioLogin);
-        if (usuarioOptional.isPresent()) {
-            Usuario usuario = usuarioOptional.get();
-            usuario.setFoto(fileName);
-            usuarioRepository.save(usuario);
-
-            String uploadDir = "user-photos/" + usuario.getLogin();
-            FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
-            return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
-        } else
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);*/
-    }
+    }*/
 
     /*
         Insere area de atuacao para um usuario especificado
@@ -92,7 +94,6 @@ public class UsuarioController {
     @PostMapping(path = "/nova-area-atuacao")
     @CrossOrigin("*")
     public ResponseEntity<?> adicionarAreaAtuacao(@RequestBody AreaAtuacaoForm areaAtuacaoForm) {
-
         Usuario usuario = usuarioService.acessarUsuarioPorLogin(areaAtuacaoForm.getLogin());
 
         if (usuario != null) {
@@ -167,7 +168,7 @@ public class UsuarioController {
         } else
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);*/
     }
-    
+
     /*
         Verifica se usuario e senha informados sao compativeis
     */
@@ -311,7 +312,7 @@ public class UsuarioController {
     } */
 
     /*
-        Retorna a imagem de perfil do usuario para ser carregada na pagina
+        Carrega foto de perfil do usuario do banco de dados
     */
     @RequestMapping(
             value = "/foto-perfil",
@@ -323,27 +324,40 @@ public class UsuarioController {
         Usuario usuario = usuarioService.acessarUsuarioPorLogin(login);
 
         if (usuario != null) {
-            String nomeDoArquivo = usuario.getFoto();
-            return usuarioService.inserirFoto(login, nomeDoArquivo);
-        } else
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Usuário não encontrado.");
+            byte[] imgBytes = usuario.getFoto();
 
-        /*Optional<Usuario> usuario = usuarioRepository.findByLogin(login);
-        if(usuario.isPresent()) {
-            String nomeDoArquivo = usuario.get().getFoto();
-            if(nomeDoArquivo == null){
-               var imgFile = new PathResource("user-photos/default-profile-pic.jpg");
-               byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
-
-               return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(bytes);
-            } else {
-                var imgFile = new PathResource("user-photos/" + login + "/" + nomeDoArquivo);
+            if (imgBytes == null) {
+                var imgFile = new PathResource("src/main/resources/imagens/perfil-teste.jpg");
                 byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
 
                 return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(bytes);
-            }
-        }*/
+            } else
+                return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imgBytes);
+        } else
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Imagem não encontrada.");
     }
+
+    // Método implementado ANTES
+    /*public ResponseEntity<byte[]> getImage(@RequestParam String login) throws IOException {
+        Optional<Usuario> usuario = usuarioRepository.findByLogin(login);
+        if(usuario.isPresent()) {
+            byte[] imgBytes = usuario.get().getFoto();
+           if(imgBytes == null){
+               var imgFile = new PathResource("src/main/resources/imagens/perfil-teste.jpg");
+               byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
+               return ResponseEntity
+                       .ok()
+                       .contentType(MediaType.IMAGE_JPEG)
+                       .body(bytes);
+           } else {
+               return ResponseEntity
+                       .ok()
+                       .contentType(MediaType.IMAGE_JPEG)
+                       .body(imgBytes);
+           }
+        }
+        return (ResponseEntity<byte[]>) ResponseEntity.status(HttpStatus.NOT_FOUND);
+    }*/
 
     /*
         Permite que o nome do usuario seja editado
