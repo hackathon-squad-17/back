@@ -189,10 +189,10 @@ public class UsuarioController {
         String usuarioSenha = usuario.getPassword();
 
         if (Objects.equals(usuarioSenha, loginForm.getSenha()))
-            return ResponseEntity.status(HttpStatus.OK).body("Usuário e senha conferem.");
+            return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
             //return ResponseEntity.status(HttpStatus.OK).body(usuario.getLogin());
         else
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Senha incorreta.");
+            return new ResponseEntity<>(null, HttpStatus.CONFLICT);
 
         /*Optional<Usuario> usuarioOptionalEmail = usuarioRepository.findByEmail(loginForm.getLoginOuEmail());
         Optional<Usuario> usuarioOptionalLogin = usuarioRepository.findByLogin(loginForm.getLoginOuEmail());
