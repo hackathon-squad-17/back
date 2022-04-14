@@ -1,18 +1,17 @@
 package com.fcamara.hackathonbackend.service;
 
-import com.fcamara.hackathonbackend.FileUploadUtil;
+import com.fcamara.hackathonbackend.formularios.CadastroForm;
 import com.fcamara.hackathonbackend.model.Usuario;
 import com.fcamara.hackathonbackend.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
 import org.springframework.core.io.PathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StreamUtils;
 
-import javax.transaction.Transactional;
 import java.io.IOException;
 import java.text.Normalizer;
 import java.util.ArrayList;
@@ -26,10 +25,22 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    //@Override
     @Transactional
     public void salvarUsuario(Usuario usuario) {
         usuarioRepository.save(usuario);
+    }
+
+    @Transactional
+    public ResponseEntity<?> criarUsuario(CadastroForm cadastroForm) {
+        Usuario novoUsuario = new Usuario(
+                cadastroForm.getNome(),
+                cadastroForm.getLogin(),
+                cadastroForm.getPassword(),
+                cadastroForm.getEmail()
+        );
+        usuarioRepository.save(novoUsuario);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body("Usuário criado com sucesso.");
     }
 
     @Transactional

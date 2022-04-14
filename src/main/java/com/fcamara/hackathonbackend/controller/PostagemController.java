@@ -5,6 +5,8 @@ import com.fcamara.hackathonbackend.formularios.PostagemForm;
 import com.fcamara.hackathonbackend.model.Usuario;
 import com.fcamara.hackathonbackend.repository.PostagemRepository;
 import com.fcamara.hackathonbackend.repository.UsuarioRepository;
+import com.fcamara.hackathonbackend.service.PostagemService;
+import com.fcamara.hackathonbackend.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,24 +22,43 @@ import java.util.regex.Pattern;
 @RequestMapping(path = "/postagens")
 public class PostagemController {
     @Autowired
-    private PostagemRepository postagemRepository;
+    private PostagemService postagemService;
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private UsuarioService usuarioService;
 
     /*
         Cria uma nova postagem
     */
     @PostMapping(path = "/nova-postagem")
-    @ResponseStatus(HttpStatus.CREATED)
     @CrossOrigin("*")
     public ResponseEntity<?> adicionarPostagem(@RequestBody PostagemForm postagemForm) {
-        Optional<Usuario> usuarioReferente = usuarioRepository.findByLogin(postagemForm.getLogin());
+        Usuario usuarioReferente = usuarioService.acessarUsuarioPorLogin(postagemForm.getLogin());
 
+        if (usuarioReferente != null) {
+            Date today = new Date();
+            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            String dataDeHoje = dateFormat.format(today);
+
+            Postagem novaPostagem = new Postagem(
+                    usuarioReferente,
+                    postagemForm.getTitulo(),
+                    postagemForm.getCategoria(),
+                    postagemForm.getConteudo(),
+                    dataDeHoje
+            );
+
+            postagemService.salvarPostagem(novaPostagem);
+
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Postagem criada com sucesso.");
+        } else
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Usuário não encontrado");
+
+        /*Optional<Usuario> usuarioReferente = usuarioRepository.findByLogin(postagemForm.getLogin());
         if(usuarioReferente.isPresent()){
             Date today = new Date();
             DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
             String dataDeHoje = dateFormat.format(today);
-            System.out.println(dataDeHoje);
+            //System.out.println(dataDeHoje);
 
             Postagem novaPostagem = new Postagem(
                     usuarioReferente.get(),
@@ -50,7 +71,7 @@ public class PostagemController {
 
             return new ResponseEntity<>(null, HttpStatus.CREATED);
         } else
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);*/
     }
 
     /*
@@ -59,7 +80,7 @@ public class PostagemController {
     @GetMapping(path = "/todas-postagens")
     @CrossOrigin("*")
     public List<Postagem> listarPostagens() {
-       return postagemRepository.findAll();
+       return postagemService.listarPostagensTodas();
     }
 
     /*
@@ -67,9 +88,13 @@ public class PostagemController {
     */
     @GetMapping(path = "/postagem-id")
     @CrossOrigin("*")
-    public Postagem postagemId(Integer id){
-        Optional<Postagem> postagem =  postagemRepository.findById(id);
-        return postagem.orElseGet(Postagem::new);
+    public Postagem listarPostagemId(int id){
+        Postagem postagem = postagemService.acessarPostagemPorId(id);
+
+        return Objects.requireNonNullElseGet(postagem, Postagem::new);
+
+        /*Optional<Postagem> postagem =  postagemRepository.findById(id);
+        return postagem.orElseGet(Postagem::new);*/
     }
 
     /*
@@ -89,10 +114,12 @@ public class PostagemController {
         Busca titulos de postagens, de acordo com a busca inserida, fornecendo sugestoes enquanto a busca eh realizada
     */
     @GetMapping(path = "/busca-postagem-sugestoes") // fornece sugestoes de titulos de acordo com a busca feita
-    public List<String> buscarPostagemComSugestoes(@RequestParam String busca) {
-        List<String> listaTitulosPostagem = postagemRepository.findTitulos();
-        //List<String> listaConteudoPostagem = postagemRepository.findConteudos();
-        List<String> sugestoes = new ArrayList<>();
+    public List<String> buscarTituloPostagemComSugestoes(@RequestParam String busca) {
+        List<String> listaTitulosPostagem = postagemService.listarTitulos();
+
+        return usuarioService.adicionarItensContidos(listaTitulosPostagem, busca);
+
+        /*List<String> listaTitulosPostagem = postagemRepository.findTitulos();
 
         listaTitulosPostagem.forEach(itemLista -> {
             // Tratamento de acentos
@@ -104,16 +131,20 @@ public class PostagemController {
                 sugestoes.add(itemLista);
         });
 
-        return sugestoes;
+        return sugestoes;*/
     }
 
     /*
         Busca conteudos de postagens de acordo com a busca inserida
     */
     @GetMapping(path = "/busca-conteudo-postagem")
-    public List<Postagem> buscarConteudoPostagem(@RequestParam String busca) {
-        List<String> listaConteudosPostagens = postagemRepository.findConteudos();
-        List<Postagem> postagensEncontradas = new ArrayList<>();
+    public List<Postagem> buscarConteudoPostagemComSugestoes(@RequestParam String busca) {
+        List<String> listaConteudosPostagens = postagemService.listarConteudos();
+        List<Integer> listaIdsPostagem = postagemService.listarIds();
+
+        return postagemService.adicionarItensContidosEmConteudo(listaConteudosPostagens, listaIdsPostagem, busca);
+
+        /*List<String> listaConteudosPostagens = postagemRepository.findConteudos();
 
         listaConteudosPostagens.forEach(itemLista -> {
             // Tratamento de acentos
@@ -123,22 +154,24 @@ public class PostagemController {
 
             if (itemListaTratado.toLowerCase().contains(busca)) {
                 int indiceItemLista = listaConteudosPostagens.indexOf(itemLista);
-                int indiceItemPostagem = indiceItemLista + 1; // os ids comecam em 1
+                int indiceItemPostagem = listaIdsPostagem.get(indiceItemLista);
 
                 Optional<Postagem> postagemOptional = postagemRepository.findById(indiceItemPostagem);
                 postagemOptional.ifPresent(postagensEncontradas::add);
             }
         });
 
-        return postagensEncontradas;
+        return postagensEncontradas;*/
     }
 
     /*
         Busca postagens de acordo com a categoria inserida
     */
+    @GetMapping(path = "/busca-categoria-postagem")
     public List<Postagem> buscarPostagemPorCategoria(@RequestParam String categoria) {
-        Optional<List<Postagem>> optionalPostagem = postagemRepository.findByCategoria(categoria);
+        return postagemService.listarPorCategoria(categoria);
 
-        return optionalPostagem.orElse(Collections.emptyList());
+        /*Optional<List<Postagem>> optionalPostagem = postagemRepository.findByCategoria(categoria);
+        return optionalPostagem.orElse(Collections.emptyList());*/
     }
 }

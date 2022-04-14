@@ -2,6 +2,8 @@ package com.fcamara.hackathonbackend.controller;
 
 import com.fcamara.hackathonbackend.model.Habilidade;
 import com.fcamara.hackathonbackend.repository.HabilidadeRepository;
+import com.fcamara.hackathonbackend.service.HabilidadeService;
+import com.fcamara.hackathonbackend.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +16,9 @@ import java.util.regex.Pattern;
 @RequestMapping(path = "/habilidades")
 public class HabilidadeController {
     @Autowired
-    HabilidadeRepository habilidadeRepository;
+    private HabilidadeService habilidadeService;
+    @Autowired
+    private UsuarioService usuarioService;
 
     /*
         Lista todas as habilidades existentes
@@ -22,7 +26,9 @@ public class HabilidadeController {
     @GetMapping(path = "/todas-habilidades")
     @CrossOrigin("*")
     public List<Habilidade> listarHabilidades() {
-        return habilidadeRepository.findAll();
+        return habilidadeService.listarHabilidadesTodas();
+
+        //return habilidadeRepository.findAll();
     }
 
     /*
@@ -30,9 +36,12 @@ public class HabilidadeController {
     */
     @GetMapping(path = "/busca-habilidades-sugestoes") // fornece sugestoes de habilidades de acordo com a busca feita
     public List<String> buscarHabilidadesComSugestoes(@RequestParam String busca) {
-        List<String> listaHabilidades = habilidadeRepository.findHabilidadePossivel();
-        List<String> sugestoes = new ArrayList<>();
+        List<String> listaHabilidades = habilidadeService.listarHabilidades();
 
+        return usuarioService.adicionarItensContidos(listaHabilidades, busca);
+
+        /*List<String> listaHabilidades = habilidadeRepository.findHabilidadePossivel();
+        List<String> sugestoes = new ArrayList<>();
         listaHabilidades.forEach(itemLista -> {
             // Tratamento de acentos
             String itemListaNormalizado = Normalizer.normalize(itemLista, Normalizer.Form.NFD);
@@ -43,6 +52,6 @@ public class HabilidadeController {
                 sugestoes.add(itemLista);
         });
 
-        return sugestoes;
+        return sugestoes;*/
     }
 }

@@ -31,8 +31,10 @@ public class UsuarioController {
     @PostMapping("/novo-usuario")
     //@ResponseStatus(HttpStatus.CREATED)
     @CrossOrigin("*")
-    public ResponseEntity<?> adicionarUsuario(@RequestBody CadastroForm cadastroForm) throws IOException {
-        Usuario novoUsuario = new Usuario(
+    public ResponseEntity<?> adicionarUsuario(@RequestBody CadastroForm cadastroForm) {
+        return usuarioService.criarUsuario(cadastroForm);
+
+        /*Usuario novoUsuario = new Usuario(
                 cadastroForm.getNome(),
                 cadastroForm.getLogin(),
                 cadastroForm.getPassword(),
@@ -40,11 +42,11 @@ public class UsuarioController {
         );
         usuarioService.salvarUsuario(novoUsuario);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body("Usuário criado com sucesso.");
+        return ResponseEntity.status(HttpStatus.CREATED).body("Usuário criado com sucesso.");*/
 
-        // String nomeArquivo = StringUtils.cleanPath(cadastroForm.getImage().getOriginalFilename());
-        //Usuario usuarioSalvo = usuarioRepository.save(novoUsuario);
-        /* String diretorioUpload = "/usuario-fotos/" + usuarioSalvo.getId();
+        /*String nomeArquivo = StringUtils.cleanPath(cadastroForm.getImage().getOriginalFilename());
+        Usuario usuarioSalvo = usuarioRepository.save(novoUsuario);
+        String diretorioUpload = "/usuario-fotos/" + usuarioSalvo.getId();
 
         FileUploadUtil.saveFile(diretorioUpload, nomeArquivo, cadastroForm.getImage()); */
     }
@@ -71,8 +73,8 @@ public class UsuarioController {
         } else
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 
-        //Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioLogin);
-        /*if (usuarioOptional.isPresent()) {
+        /*Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioLogin);
+        if (usuarioOptional.isPresent()) {
             Usuario usuario = usuarioOptional.get();
             usuario.setFoto(fileName);
             usuarioRepository.save(usuario);
@@ -90,18 +92,19 @@ public class UsuarioController {
     @PostMapping(path = "/nova-area-atuacao")
     @CrossOrigin("*")
     public ResponseEntity<?> adicionarAreaAtuacao(@RequestBody AreaAtuacaoForm areaAtuacaoForm) {
-        //Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(areaAtuacaoForm.getLogin());
+
         Usuario usuario = usuarioService.acessarUsuarioPorLogin(areaAtuacaoForm.getLogin());
 
         if (usuario != null) {
             usuario.setAreaAtuacao(areaAtuacaoForm.getAreaAtuacao());
             usuarioService.salvarUsuario(usuario);
 
-            return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Área de atuação adicionada com sucesso.");
         } else
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Usuário não encontrado.");
 
-        /*if (usuarioOptional.isPresent()) {
+        /*Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(areaAtuacaoForm.getLogin());
+        if (usuarioOptional.isPresent()) {
             Usuario usuario = usuarioOptional.get();
             usuario.setAreaAtuacao(areaAtuacaoForm.getAreaAtuacao());
             usuarioRepository.save(usuario);
@@ -117,18 +120,18 @@ public class UsuarioController {
     @PostMapping(path = "/novas-habilidades")
     @CrossOrigin("*")
     public ResponseEntity<?> adicionarHabilidade(@RequestBody HabilidadesForm habilidadesForm) {
-        //Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(habilidadesForm.getLogin());
         Usuario usuario = usuarioService.acessarUsuarioPorLogin(habilidadesForm.getLogin());
 
         if (usuario != null) {
             usuario.setHabilidades(habilidadesForm.getHabilidades());
             usuarioService.salvarUsuario(usuario);
 
-            return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Habilidade adicionada com sucesso.");
         } else
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Usuário não encontrado.");
 
-        /*if (usuarioOptional.isPresent()) {
+        /*Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(habilidadesForm.getLogin());
+        if (usuarioOptional.isPresent()) {
             Usuario usuario = usuarioOptional.get();
             usuario.setHabilidades(habilidadesForm.getHabilidades());
             usuarioRepository.save(usuario);
@@ -144,7 +147,6 @@ public class UsuarioController {
     @PostMapping(path = "/sobre-mim")
     @CrossOrigin("*")
     public ResponseEntity<?> adicionarSobreMim(@RequestBody SobreMimForm sobreMimForm) {
-        //Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(sobreMimForm.getLogin());
         Usuario usuario = usuarioService.acessarUsuarioPorLogin(sobreMimForm.getLogin());
 
         if (usuario != null) {
@@ -155,7 +157,8 @@ public class UsuarioController {
         } else
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Usuário não encontrado.");
 
-        /*if (usuarioOptional.isPresent()) {
+        /*Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(sobreMimForm.getLogin());
+        if (usuarioOptional.isPresent()) {
             Usuario usuario = usuarioOptional.get();
             usuario.setSobreMim(sobreMimForm.getSobreMim());
             usuarioRepository.save(usuario);
@@ -171,9 +174,6 @@ public class UsuarioController {
     @PostMapping(path = "/verificacao-login")
     @CrossOrigin("*")
     public ResponseEntity<?> verificarLogin(@RequestBody LoginForm loginForm) {
-        //Optional<Usuario> usuarioOptionalEmail = usuarioRepository.findByEmail(loginForm.getLoginOuEmail());
-        //Optional<Usuario> usuarioOptionalLogin = usuarioRepository.findByLogin(loginForm.getLoginOuEmail());
-
         Usuario usuarioLogin = usuarioService.acessarUsuarioPorLogin(loginForm.getLoginOuEmail());
         Usuario usuarioEmail = usuarioService.acessarUsuarioPorEmail(loginForm.getLoginOuEmail());
 
@@ -188,11 +188,15 @@ public class UsuarioController {
         String usuarioSenha = usuario.getPassword();
 
         if (Objects.equals(usuarioSenha, loginForm.getSenha()))
-            return ResponseEntity.status(HttpStatus.OK).body(usuario.getLogin());
+            return ResponseEntity.status(HttpStatus.OK).body("Usuário e senha conferem.");
+            //return ResponseEntity.status(HttpStatus.OK).body(usuario.getLogin());
         else
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Senha incorreta.");
 
-        /*if (usuarioOptionalEmail.isPresent()) {
+        /*Optional<Usuario> usuarioOptionalEmail = usuarioRepository.findByEmail(loginForm.getLoginOuEmail());
+        Optional<Usuario> usuarioOptionalLogin = usuarioRepository.findByLogin(loginForm.getLoginOuEmail());
+
+        if (usuarioOptionalEmail.isPresent()) {
             usuario = usuarioOptionalEmail.get();
         } else if (usuarioOptionalLogin.isPresent()) {
             usuario = usuarioOptionalLogin.get();
@@ -228,10 +232,10 @@ public class UsuarioController {
     */
     @GetMapping(path = "/lista-usuarios-area") // retorna a lista completa de usuarios na area informada
     public List<Usuario> listarUsuarioPorArea(@RequestParam String areaAtuacao) {
-        //Optional<List<Usuario>> optionalUsuarios = usuarioRepository.findByAreaAtuacao(areaAtuacao);
-
         return usuarioService.listarUsuariosAreaAtuacao(areaAtuacao);
-        //return optionalUsuarios.orElse(Collections.emptyList());
+
+        /*Optional<List<Usuario>> optionalUsuarios = usuarioRepository.findByAreaAtuacao(areaAtuacao);
+        return optionalUsuarios.orElse(Collections.emptyList());*/
     }
 
     /*
@@ -239,47 +243,25 @@ public class UsuarioController {
     */
     @GetMapping(path = "/busca-usuario-nome")
     public List<Usuario> buscarUsuarioPorNome(@RequestParam String nome) {
-        //Optional<List<Usuario>> optionalUsuarios = usuarioRepository.findByNome(nome);
-
         return usuarioService.listarUsuariosNome(nome);
-        //return optionalUsuarios.orElse(Collections.emptyList());
+
+        /*Optional<List<Usuario>> optionalUsuarios = usuarioRepository.findByNome(nome);
+        return optionalUsuarios.orElse(Collections.emptyList());*/
     }
 
     /*
         Busca nomes de usuarios, de acordo com a busca inserida, fornecendo sugestoes enquanto a busca eh realizada
     */
-    @GetMapping(path = "/busca-nomes-sugestoes") // fornece sugestoes de nomes de acordo com a busca feita
+    @GetMapping(path = "/busca-nomes-sugestoes")
     public List<String> buscarNomesComSugestoes(@RequestParam String busca) {
-        //List<String> listaNomesUsuarios = usuarioRepository.findNomes();
         List<String> listaNomesUsuarios = usuarioService.listarNomes();
-        //List<String> sugestoes = new ArrayList<>();
 
         return usuarioService.adicionarItensContidos(listaNomesUsuarios, busca);
 
+        /*List<String> listaNomesUsuarios = usuarioRepository.findNomes();
+        List<String> sugestoes = new ArrayList<>();
 
-        /*listaNomesUsuarios.forEach(itemLista -> {
-            // Tratamento de acentos
-            String itemListaNormalizado = Normalizer.normalize(itemLista, Normalizer.Form.NFD);
-            Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
-            String itemListaTratado = pattern.matcher(itemListaNormalizado).replaceAll("");
-
-            if (itemListaTratado.toLowerCase().contains(busca))
-                sugestoes.add(itemLista);
-        });*/
-
-        //return sugestoes;
-    }
-
-    /*
-        Busca areas de atuacao, de acordo com a busca inserida, fornecendo sugestoes enquanto a busca eh realizada
-    */
-    @GetMapping(path = "/busca-areas-sugestoes") // fornece sugestoes de areas de acordo com a busca feita
-    public List<String> buscarAreasComSugestoes(@RequestParam String busca) {
-        //List<String> sugestoes = new ArrayList<>();
-
-        return usuarioService.adicionarItensContidos(areasDeAtuacao, busca);
-
-        /*areasDeAtuacao.forEach(itemLista -> {
+        listaNomesUsuarios.forEach(itemLista -> {
             // Tratamento de acentos
             String itemListaNormalizado = Normalizer.normalize(itemLista, Normalizer.Form.NFD);
             Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
@@ -292,7 +274,27 @@ public class UsuarioController {
         return sugestoes;*/
     }
 
+    /*
+        Busca areas de atuacao, de acordo com a busca inserida, fornecendo sugestoes enquanto a busca eh realizada
+    */
+    @GetMapping(path = "/busca-areas-sugestoes")
+    public List<String> buscarAreasComSugestoes(@RequestParam String busca) {
+        return usuarioService.adicionarItensContidos(areasDeAtuacao, busca);
 
+        /*List<String> sugestoes = new ArrayList<>();
+
+        areasDeAtuacao.forEach(itemLista -> {
+            // Tratamento de acentos
+            String itemListaNormalizado = Normalizer.normalize(itemLista, Normalizer.Form.NFD);
+            Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+            String itemListaTratado = pattern.matcher(itemListaNormalizado).replaceAll("");
+
+            if (itemListaTratado.toLowerCase().contains(busca))
+                sugestoes.add(itemLista);
+        });
+
+        return sugestoes;*/
+    }
 
     /*
     @GetMapping(
@@ -318,7 +320,6 @@ public class UsuarioController {
     )
     @CrossOrigin("*")
     public ResponseEntity<?> carregarImagem(@RequestParam String login) throws IOException {
-        //Optional<Usuario> usuario = usuarioRepository.findByLogin(login);
         Usuario usuario = usuarioService.acessarUsuarioPorLogin(login);
 
         if (usuario != null) {
@@ -327,7 +328,8 @@ public class UsuarioController {
         } else
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Usuário não encontrado.");
 
-        /*if(usuario.isPresent()) {
+        /*Optional<Usuario> usuario = usuarioRepository.findByLogin(login);
+        if(usuario.isPresent()) {
             String nomeDoArquivo = usuario.get().getFoto();
             if(nomeDoArquivo == null){
                var imgFile = new PathResource("user-photos/default-profile-pic.jpg");
@@ -350,7 +352,6 @@ public class UsuarioController {
     @CrossOrigin("*")
     public ResponseEntity<?> editarNomeUsuario(@RequestBody UsuarioForm usuarioForm,
                                                @RequestParam String novoNome) {
-        //Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioForm.getLogin());
         Usuario usuario = usuarioService.acessarUsuarioPorLogin(usuarioForm.getLogin());
 
         if (usuario != null) {
@@ -361,7 +362,8 @@ public class UsuarioController {
         } else
             return ResponseEntity.status(HttpStatus.ACCEPTED).body("Usuário não encontrado.");
 
-        /*if (usuarioOptional.isPresent()) {
+        /*Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioForm.getLogin());
+        if (usuarioOptional.isPresent()) {
             Usuario usuario = usuarioOptional.get();
             usuario.setNome(novoNome);
             usuarioRepository.save(usuario);
@@ -378,7 +380,6 @@ public class UsuarioController {
     @CrossOrigin("*")
     public ResponseEntity<?> editarLoginUsuario(@RequestBody UsuarioForm usuarioForm,
                                                 @RequestParam String novoLogin) {
-        //Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioForm.getLogin());
         Usuario usuario = usuarioService.acessarUsuarioPorLogin(usuarioForm.getLogin());
 
         if (usuario != null) {
@@ -393,7 +394,8 @@ public class UsuarioController {
         } else
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Usuário não encontrado.");
 
-        /*if (usuarioOptional.isPresent()) {
+        /*Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioForm.getLogin());
+        if (usuarioOptional.isPresent()) {
             Optional<Usuario> usuarioOptionalValidacao = usuarioRepository.findByLogin(novoLogin);
 
             if (usuarioOptionalValidacao.isPresent())
@@ -415,7 +417,6 @@ public class UsuarioController {
     @PutMapping(path = "/edita-senha-usuario")
     public ResponseEntity<?> editarSenhaUsuario(@RequestBody UsuarioForm usuarioForm,
                                                 @RequestParam String novaSenha) {
-        //Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioForm.getLogin());
         Usuario usuario = usuarioService.acessarUsuarioPorLogin(usuarioForm.getLogin());
 
         if (usuario != null) {
@@ -426,7 +427,8 @@ public class UsuarioController {
         } else
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Usuário não encontrado.");
 
-        /*if (usuarioOptional.isPresent()) {
+        /*Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioForm.getLogin());
+        if (usuarioOptional.isPresent()) {
             Usuario usuario = usuarioOptional.get();
             usuario.setPassword(novaSenha);
             usuarioRepository.save(usuario);
@@ -443,7 +445,6 @@ public class UsuarioController {
     @PutMapping(path = "/edita-email-usuario")
     public ResponseEntity<?> editarEmailUsuario(@RequestBody UsuarioForm usuarioForm,
                                                 @RequestParam String novoEmail) {
-        //Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioForm.getLogin());
         Usuario usuario = usuarioService.acessarUsuarioPorLogin(usuarioForm.getLogin());
 
         if (usuario != null) {
@@ -458,7 +459,8 @@ public class UsuarioController {
         } else
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Usuário não encontrado.");
 
-        /*if (usuarioOptional.isPresent()) {
+        /*Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioForm.getLogin());
+        if (usuarioOptional.isPresent()) {
             Optional<Usuario> usuarioOptionalValidacao = usuarioRepository.findByEmail(novoEmail);
 
             if (usuarioOptionalValidacao.isPresent())
@@ -480,7 +482,6 @@ public class UsuarioController {
     @PutMapping(path = "/edita-area-atuacao-usuario")
     public ResponseEntity<?> editarAreaAtuacaoUsuario(@RequestBody UsuarioForm usuarioForm,
                                                       @RequestParam String novaAreaAtuacao) {
-        //Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioForm.getLogin());
         Usuario usuario = usuarioService.acessarUsuarioPorLogin(usuarioForm.getLogin());
 
         if (usuario != null) {
@@ -491,7 +492,8 @@ public class UsuarioController {
         } else
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Usuário não encontrado.");
 
-        /*if (usuarioOptional.isPresent()) {
+        /*Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioForm.getLogin());
+        if (usuarioOptional.isPresent()) {
             Usuario usuario = usuarioOptional.get();
             usuario.setAreaAtuacao(novaAreaAtuacao);
             usuarioRepository.save(usuario);
@@ -507,7 +509,6 @@ public class UsuarioController {
     @PutMapping(path = "/edita-sobre-mim-usuario")
     public ResponseEntity<?> editarSobreMimUsuario(@RequestBody UsuarioForm usuarioForm,
                                                    @RequestParam String novoSobreMim) {
-        //Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioForm.getLogin());
         Usuario usuario = usuarioService.acessarUsuarioPorLogin(usuarioForm.getLogin());
 
         if (usuario != null) {
@@ -518,7 +519,8 @@ public class UsuarioController {
         } else
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Usuário não encontrado");
 
-        /*if (usuarioOptional.isPresent()) {
+        /*Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioForm.getLogin());
+        if (usuarioOptional.isPresent()) {
             Usuario usuario = usuarioOptional.get();
             usuario.setSobreMim(novoSobreMim);
             usuarioRepository.save(usuario);

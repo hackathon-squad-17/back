@@ -1,9 +1,7 @@
 package com.fcamara.hackathonbackend.service;
 
+import com.fcamara.hackathonbackend.formularios.CadastroForm;
 import com.fcamara.hackathonbackend.model.Usuario;
-import com.fcamara.hackathonbackend.repository.UsuarioRepository;
-import org.apache.catalina.Service;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
@@ -12,6 +10,8 @@ import java.util.Optional;
 
 public interface UsuarioService {
     public void salvarUsuario(Usuario usuario);
+
+    public ResponseEntity<?> criarUsuario(CadastroForm cadastroForm);
 
     public Usuario acessarUsuario(Optional<Usuario> usuarioOptional);
 
@@ -36,5 +36,4 @@ public interface UsuarioService {
     public boolean verificarExistenciaDeLogin(String login);
 
     public boolean verificarExistenciaDeEmail(String email);
-
 }

@@ -7,6 +7,10 @@ import com.fcamara.hackathonbackend.model.Usuario;
 import com.fcamara.hackathonbackend.repository.ComentarioRepository;
 import com.fcamara.hackathonbackend.repository.PostagemRepository;
 import com.fcamara.hackathonbackend.repository.UsuarioRepository;
+import com.fcamara.hackathonbackend.service.ComentarioService;
+import com.fcamara.hackathonbackend.service.PostagemService;
+import com.fcamara.hackathonbackend.service.PostagemServiceImpl;
+import com.fcamara.hackathonbackend.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,11 +26,11 @@ import java.util.Optional;
 @RequestMapping(path = "/comentarios")
 public class ComentarioController {
     @Autowired
-    ComentarioRepository comentarioRepository;
+    private UsuarioService usuarioService;
     @Autowired
-    PostagemRepository postagemRepository;
+    private PostagemService postagemService;
     @Autowired
-    UsuarioRepository usuarioRepository;
+    private ComentarioService comentarioService;
 
     /*
         Cria um novo comentario
@@ -34,9 +38,13 @@ public class ComentarioController {
     @PostMapping(path = "/novo-comentario")
     @CrossOrigin("*")
     public ResponseEntity<?> adicionarComentario(@RequestBody ComentarioForm comentarioForm) {
-        Optional<Postagem> postagem = postagemRepository.findById(comentarioForm.getIdPost());
-        Optional<Usuario> usuario = usuarioRepository.findByLogin(comentarioForm.getLogin());
+        Usuario usuario = usuarioService.acessarUsuarioPorLogin(comentarioForm.getLogin());
+        Postagem postagem = postagemService.acessarPostagemPorId(comentarioForm.getIdPost());
 
+        return comentarioService.criarComentario(usuario, postagem, comentarioForm);
+
+        /*Optional<Postagem> postagem = postagemRepository.findById(comentarioForm.getIdPost());
+        Optional<Usuario> usuario = usuarioRepository.findByLogin(comentarioForm.getLogin());
         if (postagem.isPresent() && usuario.isPresent()) {
             Date today = new Date();
             DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -47,7 +55,7 @@ public class ComentarioController {
 
             return new ResponseEntity<>(null, HttpStatus.CREATED);
         } else
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);*/
     }
 
     /*
@@ -55,7 +63,9 @@ public class ComentarioController {
     */
     @GetMapping(path = "/todos-comentarios")
     public List<Comentario> listarComentarios() {
-        return comentarioRepository.findAll();
+        return comentarioService.listarComentariosTodos();
+
+        //return comentarioRepository.findAll();
     }
 
 
