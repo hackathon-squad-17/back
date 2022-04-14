@@ -38,7 +38,7 @@ public class Usuario {
     @JsonIgnore
     private byte[] foto;
 
-    @Column //(name = "sobre_mim")
+    @Column (name = "sobre_mim", length = 1000)
     private String sobreMim;
 
     // @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
