@@ -6,7 +6,6 @@ public class CadastroForm {
     private String login;
     private String password;
     private String email;
-    //private String sobreMim;
     /* ---------------------------------------------------- */
 
 
@@ -42,13 +41,5 @@ public class CadastroForm {
     public void setEmail(String email) {
         this.email = email;
     }
-
-    /*public String getSobreMim() {
-        return sobreMim;
-    }
-
-    public void setSobreMim(String sobreMim) {
-        this.sobreMim = sobreMim;
-    }*/
     /* ---------------------------------------------------- */
 }

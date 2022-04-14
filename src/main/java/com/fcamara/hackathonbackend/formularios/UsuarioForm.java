@@ -1,11 +1,5 @@
 package com.fcamara.hackathonbackend.formularios;
 
-import com.fcamara.hackathonbackend.model.Usuario;
-
-import javax.persistence.Transient;
-import java.util.List;
-import java.util.Objects;
-
 public class UsuarioForm {
     /* ------------------- Propriedades ------------------- */
     private String nome;

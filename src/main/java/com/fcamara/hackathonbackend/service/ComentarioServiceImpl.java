@@ -52,5 +52,4 @@ public class ComentarioServiceImpl implements ComentarioService {
     public List<Comentario> listarComentariosTodos() {
         return comentarioRepository.findAll();
     }
-
 }

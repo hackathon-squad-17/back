@@ -41,6 +41,5 @@ public class PostagemForm {
     public void setCategoria(String categoria) {
         this.categoria = categoria;
     }
-
     /* ---------------------------------------------------- */
 }

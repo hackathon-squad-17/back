@@ -4,7 +4,6 @@ import com.fcamara.hackathonbackend.formularios.*;
 import com.fcamara.hackathonbackend.formularios.CadastroForm;
 import com.fcamara.hackathonbackend.formularios.UsuarioForm;
 import com.fcamara.hackathonbackend.model.*;
-import com.fcamara.hackathonbackend.repository.UsuarioRepository;
 import com.fcamara.hackathonbackend.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.PathResource;
@@ -23,8 +22,6 @@ import java.util.*;
 @RequestMapping(path = "/usuarios")
 public class UsuarioController {
     @Autowired
-    private UsuarioRepository usuarioRepository;
-    @Autowired
     private UsuarioService usuarioService;
     private final List<String> areasDeAtuacao = Arrays.asList("Front-end", "Back-end", "FullStack", "UX", "UI","UX/UI");
 
@@ -32,26 +29,9 @@ public class UsuarioController {
         Cria um novo usuario
     */
     @PostMapping("/novo-usuario")
-    //@ResponseStatus(HttpStatus.CREATED)
     @CrossOrigin("*")
     public ResponseEntity<?> adicionarUsuario(@RequestBody CadastroForm cadastroForm) {
         return usuarioService.criarUsuario(cadastroForm);
-
-        /*Usuario novoUsuario = new Usuario(
-                cadastroForm.getNome(),
-                cadastroForm.getLogin(),
-                cadastroForm.getPassword(),
-                cadastroForm.getEmail()
-        );
-        usuarioService.salvarUsuario(novoUsuario);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body("Usuário criado com sucesso.");
-
-        String nomeArquivo = StringUtils.cleanPath(cadastroForm.getImage().getOriginalFilename());
-        Usuario usuarioSalvo = usuarioRepository.save(novoUsuario);
-        String diretorioUpload = "/usuario-fotos/" + usuarioSalvo.getId();
-
-        FileUploadUtil.saveFile(diretorioUpload, nomeArquivo, cadastroForm.getImage()); */
     }
 
     /*
@@ -73,21 +53,6 @@ public class UsuarioController {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
-    // Método implementado ANTES
-    /*public ResponseEntity<?> salvarFoto(@RequestParam String usuarioLogin,
-                                       @RequestParam("image") MultipartFile multipartFile) throws IOException {
-        String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
-        Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioLogin);
-        if (usuarioOptional.isPresent()) {
-            Usuario usuario = usuarioOptional.get();
-            usuario.setFoto(multipartFile.getBytes());
-            usuarioRepository.save(usuario);
-
-            return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
-        } else
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-    }*/
-
     /*
         Insere area de atuacao para um usuario especificado
     */
@@ -103,16 +68,6 @@ public class UsuarioController {
             return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
         } else
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-
-        /*Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(areaAtuacaoForm.getLogin());
-        if (usuarioOptional.isPresent()) {
-            Usuario usuario = usuarioOptional.get();
-            usuario.setAreaAtuacao(areaAtuacaoForm.getAreaAtuacao());
-            usuarioRepository.save(usuario);
-
-            return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
-        } else
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);*/
     }
 
     /*
@@ -130,16 +85,6 @@ public class UsuarioController {
             return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
         } else
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-
-        /*Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(habilidadesForm.getLogin());
-        if (usuarioOptional.isPresent()) {
-            Usuario usuario = usuarioOptional.get();
-            usuario.setHabilidades(habilidadesForm.getHabilidades());
-            usuarioRepository.save(usuario);
-
-            return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
-        } else
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);*/
     }
 
     /*
@@ -157,16 +102,6 @@ public class UsuarioController {
             return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
         } else
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-
-        /*Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(sobreMimForm.getLogin());
-        if (usuarioOptional.isPresent()) {
-            Usuario usuario = usuarioOptional.get();
-            usuario.setSobreMim(sobreMimForm.getSobreMim());
-            usuarioRepository.save(usuario);
-
-            return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
-        } else
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);*/
     }
 
     /*
@@ -189,27 +124,9 @@ public class UsuarioController {
         String usuarioSenha = usuario.getPassword();
 
         if (Objects.equals(usuarioSenha, loginForm.getSenha()))
-            return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
-            //return ResponseEntity.status(HttpStatus.OK).body(usuario.getLogin());
-        else
-            return new ResponseEntity<>(null, HttpStatus.CONFLICT);
-
-        /*Optional<Usuario> usuarioOptionalEmail = usuarioRepository.findByEmail(loginForm.getLoginOuEmail());
-        Optional<Usuario> usuarioOptionalLogin = usuarioRepository.findByLogin(loginForm.getLoginOuEmail());
-
-        if (usuarioOptionalEmail.isPresent()) {
-            usuario = usuarioOptionalEmail.get();
-        } else if (usuarioOptionalLogin.isPresent()) {
-            usuario = usuarioOptionalLogin.get();
-        } else
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Usuário não encontrado.");
-
-        String usuarioSenha = usuario.getPassword();
-
-        if (Objects.equals(usuarioSenha, loginForm.getSenha()))
             return ResponseEntity.status(HttpStatus.OK).body(usuario.getLogin());
         else
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Senha incorreta.");*/
+            return new ResponseEntity<>(null, HttpStatus.CONFLICT);
     }
 
     /*
@@ -234,9 +151,6 @@ public class UsuarioController {
     @GetMapping(path = "/lista-usuarios-area") // retorna a lista completa de usuarios na area informada
     public List<Usuario> listarUsuarioPorArea(@RequestParam String areaAtuacao) {
         return usuarioService.listarUsuariosAreaAtuacao(areaAtuacao);
-
-        /*Optional<List<Usuario>> optionalUsuarios = usuarioRepository.findByAreaAtuacao(areaAtuacao);
-        return optionalUsuarios.orElse(Collections.emptyList());*/
     }
 
     /*
@@ -245,9 +159,6 @@ public class UsuarioController {
     @GetMapping(path = "/busca-usuario-nome")
     public List<Usuario> buscarUsuarioPorNome(@RequestParam String nome) {
         return usuarioService.listarUsuariosNome(nome);
-
-        /*Optional<List<Usuario>> optionalUsuarios = usuarioRepository.findByNome(nome);
-        return optionalUsuarios.orElse(Collections.emptyList());*/
     }
 
     /*
@@ -258,21 +169,6 @@ public class UsuarioController {
         List<String> listaNomesUsuarios = usuarioService.listarNomes();
 
         return usuarioService.adicionarItensContidos(listaNomesUsuarios, busca);
-
-        /*List<String> listaNomesUsuarios = usuarioRepository.findNomes();
-        List<String> sugestoes = new ArrayList<>();
-
-        listaNomesUsuarios.forEach(itemLista -> {
-            // Tratamento de acentos
-            String itemListaNormalizado = Normalizer.normalize(itemLista, Normalizer.Form.NFD);
-            Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
-            String itemListaTratado = pattern.matcher(itemListaNormalizado).replaceAll("");
-
-            if (itemListaTratado.toLowerCase().contains(busca))
-                sugestoes.add(itemLista);
-        });
-
-        return sugestoes;*/
     }
 
     /*
@@ -281,35 +177,7 @@ public class UsuarioController {
     @GetMapping(path = "/busca-areas-sugestoes")
     public List<String> buscarAreasComSugestoes(@RequestParam String busca) {
         return usuarioService.adicionarItensContidos(areasDeAtuacao, busca);
-
-        /*List<String> sugestoes = new ArrayList<>();
-
-        areasDeAtuacao.forEach(itemLista -> {
-            // Tratamento de acentos
-            String itemListaNormalizado = Normalizer.normalize(itemLista, Normalizer.Form.NFD);
-            Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
-            String itemListaTratado = pattern.matcher(itemListaNormalizado).replaceAll("");
-
-            if (itemListaTratado.toLowerCase().contains(busca))
-                sugestoes.add(itemLista);
-        });
-
-        return sugestoes;*/
     }
-
-    /*
-    @GetMapping(
-            path = "/download-foto",
-            produces = MediaType.IMAGE_JPEG_VALUE
-    )
-  public @ResponseBody byte[] carregarImagem() throws IOException {
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("imagens/perfil-teste.jpg");
-
-        if (inputStream == null)
-            return null;
-
-        return IOUtils.toByteArray(inputStream);
-    } */
 
     /*
         Carrega foto de perfil do usuario do banco de dados
@@ -337,28 +205,6 @@ public class UsuarioController {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
-    // Método implementado ANTES
-    /*public ResponseEntity<byte[]> getImage(@RequestParam String login) throws IOException {
-        Optional<Usuario> usuario = usuarioRepository.findByLogin(login);
-        if(usuario.isPresent()) {
-            byte[] imgBytes = usuario.get().getFoto();
-           if(imgBytes == null){
-               var imgFile = new PathResource("src/main/resources/imagens/perfil-teste.jpg");
-               byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
-               return ResponseEntity
-                       .ok()
-                       .contentType(MediaType.IMAGE_JPEG)
-                       .body(bytes);
-           } else {
-               return ResponseEntity
-                       .ok()
-                       .contentType(MediaType.IMAGE_JPEG)
-                       .body(imgBytes);
-           }
-        }
-        return (ResponseEntity<byte[]>) ResponseEntity.status(HttpStatus.NOT_FOUND);
-    }*/
-
     /*
         Permite que o nome do usuario seja editado
     */
@@ -375,16 +221,6 @@ public class UsuarioController {
             return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
         } else
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-
-        /*Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioForm.getLogin());
-        if (usuarioOptional.isPresent()) {
-            Usuario usuario = usuarioOptional.get();
-            usuario.setNome(novoNome);
-            usuarioRepository.save(usuario);
-
-            return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
-        } else
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);*/
     }
 
     /*
@@ -407,22 +243,6 @@ public class UsuarioController {
             }
         } else
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-
-        /*Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioForm.getLogin());
-        if (usuarioOptional.isPresent()) {
-            Optional<Usuario> usuarioOptionalValidacao = usuarioRepository.findByLogin(novoLogin);
-
-            if (usuarioOptionalValidacao.isPresent())
-                return new ResponseEntity<>(null, HttpStatus.CONFLICT);
-            else {
-                Usuario usuario = usuarioOptional.get();
-                usuario.setLogin(novoLogin);
-                usuarioRepository.save(usuario);
-
-                return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
-            }
-        } else
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);*/
     }
 
     /*
@@ -440,17 +260,6 @@ public class UsuarioController {
             return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
         } else
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-
-        /*Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioForm.getLogin());
-        if (usuarioOptional.isPresent()) {
-            Usuario usuario = usuarioOptional.get();
-            usuario.setPassword(novaSenha);
-            usuarioRepository.save(usuario);
-
-            return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
-        }
-        else
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);*/
     }
 
     /*
@@ -472,22 +281,6 @@ public class UsuarioController {
             }
         } else
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-
-        /*Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioForm.getLogin());
-        if (usuarioOptional.isPresent()) {
-            Optional<Usuario> usuarioOptionalValidacao = usuarioRepository.findByEmail(novoEmail);
-
-            if (usuarioOptionalValidacao.isPresent())
-                return new ResponseEntity<>(null, HttpStatus.CONFLICT);
-            else {
-                Usuario usuario = usuarioOptional.get();
-                usuario.setEmail(novoEmail);
-                usuarioRepository.save(usuario);
-
-                return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
-            }
-        } else
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);*/
     }
 
     /*
@@ -505,16 +298,6 @@ public class UsuarioController {
             return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
         } else
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-
-        /*Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioForm.getLogin());
-        if (usuarioOptional.isPresent()) {
-            Usuario usuario = usuarioOptional.get();
-            usuario.setAreaAtuacao(novaAreaAtuacao);
-            usuarioRepository.save(usuario);
-
-            return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
-        } else
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);*/
     }
 
     /*
@@ -532,16 +315,5 @@ public class UsuarioController {
             return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
         } else
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-
-        /*Optional<Usuario> usuarioOptional = usuarioRepository.findByLogin(usuarioForm.getLogin());
-        if (usuarioOptional.isPresent()) {
-            Usuario usuario = usuarioOptional.get();
-            usuario.setSobreMim(novoSobreMim);
-            usuarioRepository.save(usuario);
-
-            return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
-        }
-        else
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);*/
     }
 }

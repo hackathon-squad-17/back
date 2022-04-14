@@ -1,7 +1,5 @@
 package com.fcamara.hackathonbackend.formularios;
 
-import java.util.List;
-
 public class SobreMimForm {
     /* ------------------- Propriedades ------------------- */
     private String login;

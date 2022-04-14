@@ -40,10 +40,6 @@ public class Usuario {
 
     @Column (name = "sobre_mim", length = 1000)
     private String sobreMim;
-
-    // @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    // @JsonManagedReference
-    // private List<Postagem> postagens;
     /* ---------------------------------------------------- */
 
 
