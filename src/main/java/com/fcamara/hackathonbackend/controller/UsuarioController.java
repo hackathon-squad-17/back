@@ -316,19 +316,19 @@ public class UsuarioController {
             return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
         } else
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    }
 
     @RequestMapping(value="/atualiza-usuario", method = RequestMethod.PUT)
     @CrossOrigin("*")
     public ResponseEntity<?> atualizaUsuario(@RequestBody Usuario usuario){
-        Optional<Usuario> optionalUsuario = usuarioRepository.findByLogin(usuario.getLogin());
-        if(optionalUsuario.isPresent()){
-            Usuario usuarioBanco = optionalUsuario.get();
+        Usuario usuarioBanco = usuarioService.acessarUsuarioPorLogin(usuario.getLogin());
+        if(usuarioBanco != null){
             usuarioBanco.setNome(usuario.getNome());
             usuarioBanco.setAreaAtuacao(usuario.getAreaAtuacao());
             usuarioBanco.setEmail(usuario.getEmail());
             usuarioBanco.setHabilidades(usuario.getHabilidades());
             usuarioBanco.setSobreMim(usuario.getSobreMim());
-            usuarioRepository.save(usuarioBanco);
+            usuarioService.salvarUsuario(usuarioBanco);
             return ResponseEntity.status(HttpStatus.OK).body(usuario.getLogin());
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Usuário não encontrado");
@@ -339,9 +339,10 @@ public class UsuarioController {
             produces = MediaType.IMAGE_JPEG_VALUE)
     @CrossOrigin("*")
     public ResponseEntity<byte[]> getImage(@RequestParam String login) throws IOException {
-        Optional<Usuario> usuario = usuarioRepository.findByLogin(login);
-        if(usuario.isPresent()) {
-            byte[] imgBytes = usuario.get().getFoto();
+        Usuario usuario = usuarioService.acessarUsuarioPorLogin(login);
+
+        if(usuario != null) {
+            byte[] imgBytes = usuario.getFoto();
            if(imgBytes == null){
                var imgFile = new PathResource("src/main/resources/imagens/perfil-teste.jpg");
                byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
