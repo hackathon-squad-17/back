@@ -1,38 +1,80 @@
 package com.fcamara.hackathonbackend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
 public class Usuario {
+    /* ------------------- Propriedades ------------------- */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "nome")
     private String nome;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "login")
+    private String login;
+
+    @Column(nullable = false, name = "senha")
+    @JsonIgnore
     private String password;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "email")
     private String email;
 
+    @Column(name = "area_de_atuacao")
+    private String areaAtuacao;
+
+    @ElementCollection
+    private List<String> habilidades;
+
+    @Lob
+    @Type(type = "org.hibernate.type.ImageType")
+    @JsonIgnore
+    private byte[] foto;
+
+    @Column (name = "sobre_mim", length = 1000)
+    private String sobreMim;
+    /* ---------------------------------------------------- */
+
+
+    /* ------------------- Construtores ------------------- */
     public Usuario() {}
 
-    public Usuario(String nome, String password, String email) {
+    public Usuario(String nome, String login, String password, String email) {
         this.nome = nome;
+        this.login = login;
         this.password = password;
         this.email = email;
+        this.foto = null;
+    }
+    /* ---------------------------------------------------- */
+
+
+    /* ------------ Métodos de acessibilidade ------------- */
+    public int getId() {
+        return id;
     }
 
-    /* Metodos de acessibilidade */
     public String getNome() {
         return nome;
     }
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
     }
 
     public String getPassword() {
@@ -50,7 +92,46 @@ public class Usuario {
     public void setEmail(String email) {
         this.email = email;
     }
-    /* ------------------------- */
+
+    public String getAreaAtuacao() {
+        return areaAtuacao;
+    }
+
+    public void setAreaAtuacao(String areaAtuacao) {
+        this.areaAtuacao = areaAtuacao;
+    }
+
+    public List<String> getHabilidades() {
+        return habilidades;
+    }
+
+    public void setHabilidades(List<String> habilidades) {
+        this.habilidades = habilidades;
+    }
+
+    public void setFoto(byte[] foto) {
+        this.foto = foto;
+    }
+
+    public String getSobreMim() {
+        return sobreMim;
+    }
+
+    public void setSobreMim(String sobreMim) {
+        this.sobreMim = sobreMim;
+    }
+
+    public byte[] getFoto() {
+        return foto;
+    }
+
+    @Transient
+    public String getFotosCaminhoImagem() {
+        if (foto == null || id == 0)
+            return null;
+
+        return "/usuario-fotos" + id + "/" + foto;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -64,4 +145,22 @@ public class Usuario {
     public int hashCode() {
         return Objects.hash(id, nome, password, email);
     }
+    /* ---------------------------------------------------- */
+
+
+    /* --------------- Métodos necessarios ---------------- */
+    public void setUmaHabilidade(String habilidade) {
+        this.habilidades.add(habilidade);
+    }
+
+    @Override
+    public String toString() {
+        return "Usuário[" +
+                "\n\t" + nome +
+                "\n\t" + login +
+                "\n\t" + password +
+                "\n\t" + email +
+                "]";
+    }
+    /* ---------------------------------------------------- */
 }
