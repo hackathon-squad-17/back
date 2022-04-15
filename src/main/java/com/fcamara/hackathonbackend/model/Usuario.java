@@ -12,12 +12,13 @@ public class Usuario {
     /* ------------------- Propriedades ------------------- */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private int id;
 
     @Column(nullable = false, name = "nome")
     private String nome;
 
-    @Column(nullable = false, name = "login")
+    @Column(nullable = false, name = "login", updatable = false)
     private String login;
 
     @Column(nullable = false, name = "senha")
@@ -35,6 +36,7 @@ public class Usuario {
 
     @Lob
     @Type(type = "org.hibernate.type.ImageType")
+    @Column(updatable = false)
     @JsonIgnore
     private byte[] foto;
 
@@ -125,13 +127,6 @@ public class Usuario {
         return foto;
     }
 
-    @Transient
-    public String getFotosCaminhoImagem() {
-        if (foto == null || id == 0)
-            return null;
-
-        return "/usuario-fotos" + id + "/" + foto;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -149,9 +144,9 @@ public class Usuario {
 
 
     /* --------------- Métodos necessarios ---------------- */
-    public void setUmaHabilidade(String habilidade) {
-        this.habilidades.add(habilidade);
-    }
+//    public void setUmaHabilidade(String habilidade) {
+    //    this.habilidades.add(habilidade);
+  //  }
 
     @Override
     public String toString() {
