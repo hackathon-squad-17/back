@@ -318,7 +318,7 @@ public class UsuarioController {
 
     @RequestMapping(value="/atualiza-usuario", method = RequestMethod.PUT)
     @CrossOrigin("*")
-    public ResponseEntity<?> atualizaUsuario(@RequestBody Usuario usuario){
+    public ResponseEntity<?> atualizarUsuario(@RequestBody Usuario usuario){
         Usuario usuarioBanco = usuarioService.acessarUsuarioPorLogin(usuario.getLogin());
 
         if(usuarioBanco != null){
