@@ -230,6 +230,24 @@ public class UsuarioController {
         return IOUtils.toByteArray(inputStream);
     } */
 
+    @RequestMapping(value="/atualiza-usuario", method = RequestMethod.PUT)
+    @CrossOrigin("*")
+    public ResponseEntity<?> atualizaUsuario(@RequestBody Usuario usuario){
+        Optional<Usuario> optionalUsuario = usuarioRepository.findByLogin(usuario.getLogin());
+        if(optionalUsuario.isPresent()){
+            Usuario usuarioBanco = optionalUsuario.get();
+            usuarioBanco.setNome(usuario.getNome());
+            usuarioBanco.setAreaAtuacao(usuario.getAreaAtuacao());
+            usuarioBanco.setEmail(usuario.getEmail());
+            usuarioBanco.setHabilidades(usuario.getHabilidades());
+            usuarioBanco.setSobreMim(usuario.getSobreMim());
+            usuarioRepository.save(usuarioBanco);
+            return ResponseEntity.status(HttpStatus.OK).body(usuario.getLogin());
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Usuário não encontrado");
+    }
+
+
     @RequestMapping(value = "/foto-perfil", method = RequestMethod.GET,
             produces = MediaType.IMAGE_JPEG_VALUE)
     @CrossOrigin("*")
