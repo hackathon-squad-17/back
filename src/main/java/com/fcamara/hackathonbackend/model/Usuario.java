@@ -36,7 +36,7 @@ public class Usuario {
 
     @Lob
     @Type(type = "org.hibernate.type.ImageType")
-    @Column(updatable = false)
+    // @Column(updatable = false)
     @JsonIgnore
     private byte[] foto;
 

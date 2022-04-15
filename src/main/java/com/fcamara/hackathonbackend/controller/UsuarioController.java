@@ -41,9 +41,8 @@ public class UsuarioController {
     @CrossOrigin("*")
     public ResponseEntity<?> salvarFoto(@RequestParam String usuarioLogin,
                                         @RequestParam("image") MultipartFile multipartFile) throws IOException {
-        String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
-        Usuario usuario = usuarioService.acessarUsuarioPorLogin(usuarioLogin);
 
+        Usuario usuario = usuarioService.acessarUsuarioPorLogin(usuarioLogin);
         if (usuario != null) {
             usuario.setFoto(multipartFile.getBytes());
             usuarioService.salvarUsuario(usuario);
