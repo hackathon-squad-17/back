@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StreamUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,8 +40,8 @@ public class UsuarioController {
     @CrossOrigin("*")
     public ResponseEntity<?> salvarFoto(@RequestParam String usuarioLogin,
                                         @RequestParam("image") MultipartFile multipartFile) throws IOException {
-
         Usuario usuario = usuarioService.acessarUsuarioPorLogin(usuarioLogin);
+
         if (usuario != null) {
             usuario.setFoto(multipartFile.getBytes());
             usuarioService.salvarUsuario(usuario);
@@ -321,6 +320,7 @@ public class UsuarioController {
     @CrossOrigin("*")
     public ResponseEntity<?> atualizaUsuario(@RequestBody Usuario usuario){
         Usuario usuarioBanco = usuarioService.acessarUsuarioPorLogin(usuario.getLogin());
+
         if(usuarioBanco != null){
             usuarioBanco.setNome(usuario.getNome());
             usuarioBanco.setAreaAtuacao(usuario.getAreaAtuacao());
@@ -328,34 +328,10 @@ public class UsuarioController {
             usuarioBanco.setHabilidades(usuario.getHabilidades());
             usuarioBanco.setSobreMim(usuario.getSobreMim());
             usuarioService.salvarUsuario(usuarioBanco);
+
             return ResponseEntity.status(HttpStatus.OK).body(usuario.getLogin());
         }
+
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Usuário não encontrado");
     }
-
-
-   /* @RequestMapping(value = "/foto-perfil", method = RequestMethod.GET,
-            produces = MediaType.IMAGE_JPEG_VALUE)
-    @CrossOrigin("*")
-    public ResponseEntity<byte[]> getImage(@RequestParam String login) throws IOException {
-        Usuario usuario = usuarioService.acessarUsuarioPorLogin(login);
-
-        if(usuario != null) {
-            byte[] imgBytes = usuario.getFoto();
-           if(imgBytes == null){
-               var imgFile = new PathResource("src/main/resources/imagens/perfil-teste.jpg");
-               byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
-               return ResponseEntity
-                       .ok()
-                       .contentType(MediaType.IMAGE_JPEG)
-                       .body(bytes);
-           } else {
-               return ResponseEntity
-                       .ok()
-                       .contentType(MediaType.IMAGE_JPEG)
-                       .body(imgBytes);
-           }
-        }
-        return (ResponseEntity<byte[]>) ResponseEntity.status(HttpStatus.NOT_FOUND);
-    } */
 }
