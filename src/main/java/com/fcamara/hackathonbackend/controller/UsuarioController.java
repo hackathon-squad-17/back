@@ -335,7 +335,7 @@ public class UsuarioController {
     }
 
 
-    @RequestMapping(value = "/foto-perfil", method = RequestMethod.GET,
+   /* @RequestMapping(value = "/foto-perfil", method = RequestMethod.GET,
             produces = MediaType.IMAGE_JPEG_VALUE)
     @CrossOrigin("*")
     public ResponseEntity<byte[]> getImage(@RequestParam String login) throws IOException {
@@ -358,6 +358,5 @@ public class UsuarioController {
            }
         }
         return (ResponseEntity<byte[]>) ResponseEntity.status(HttpStatus.NOT_FOUND);
-
-    }
+    } */
 }
