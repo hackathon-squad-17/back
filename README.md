@@ -54,7 +54,7 @@ ___
 
 Não tem o OpenJDK instalado? Confira aqui alguns tutoriais que podem ser usados para fazer a instalação: 
 
-:computer_mouse: [Instale o OpenJDK 11 no *Windows*](https://access.redhat.com/documentation/en-us/openjdk/11/html-single/installing_and_using_openjdk_11_for_windows/index#openjdk_for_windows_installation_options) ou [instale o JDK 16 no *Windows*](https://www.codejava.net/java-se/download-and-install-openjdk-16)
+:computer_mouse: [Instale o OpenJDK 11 no *Windows*](https://access.redhat.com/documentation/en-us/openjdk/11/html-single/installing_and_using_openjdk_11_for_windows/index#openjdk_for_windows_installation_options) ou [instale o OpenJDK 16 no *Windows*](https://www.codejava.net/java-se/download-and-install-openjdk-16)
 
 :computer_mouse: [Instale o OpenJDK 11 ou 16 no *Ubuntu*](https://mkyong.com/java/how-to-install-java-jdk-on-ubuntu-linux/)
 
