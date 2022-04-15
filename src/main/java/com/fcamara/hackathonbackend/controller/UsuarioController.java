@@ -257,6 +257,7 @@ public class UsuarioController {
             usuario.setPassword(novaSenha);
             usuarioService.salvarUsuario(usuario);
 
+
             return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
         } else
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -315,5 +316,48 @@ public class UsuarioController {
             return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
         } else
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    }
+
+    @RequestMapping(value="/atualiza-usuario", method = RequestMethod.PUT)
+    @CrossOrigin("*")
+    public ResponseEntity<?> atualizaUsuario(@RequestBody Usuario usuario){
+        Usuario usuarioBanco = usuarioService.acessarUsuarioPorLogin(usuario.getLogin());
+        if(usuarioBanco != null){
+            usuarioBanco.setNome(usuario.getNome());
+            usuarioBanco.setAreaAtuacao(usuario.getAreaAtuacao());
+            usuarioBanco.setEmail(usuario.getEmail());
+            usuarioBanco.setHabilidades(usuario.getHabilidades());
+            usuarioBanco.setSobreMim(usuario.getSobreMim());
+            usuarioService.salvarUsuario(usuarioBanco);
+            return ResponseEntity.status(HttpStatus.OK).body(usuario.getLogin());
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Usuário não encontrado");
+    }
+
+
+    @RequestMapping(value = "/foto-perfil", method = RequestMethod.GET,
+            produces = MediaType.IMAGE_JPEG_VALUE)
+    @CrossOrigin("*")
+    public ResponseEntity<byte[]> getImage(@RequestParam String login) throws IOException {
+        Usuario usuario = usuarioService.acessarUsuarioPorLogin(login);
+
+        if(usuario != null) {
+            byte[] imgBytes = usuario.getFoto();
+           if(imgBytes == null){
+               var imgFile = new PathResource("src/main/resources/imagens/perfil-teste.jpg");
+               byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
+               return ResponseEntity
+                       .ok()
+                       .contentType(MediaType.IMAGE_JPEG)
+                       .body(bytes);
+           } else {
+               return ResponseEntity
+                       .ok()
+                       .contentType(MediaType.IMAGE_JPEG)
+                       .body(imgBytes);
+           }
+        }
+        return (ResponseEntity<byte[]>) ResponseEntity.status(HttpStatus.NOT_FOUND);
+
     }
 }
