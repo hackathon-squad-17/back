@@ -42,23 +42,18 @@ public class Usuario {
 
     @Column (name = "sobre_mim", length = 1000)
     private String sobreMim;
-
-    // @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    // @JsonManagedReference
-    // private List<Postagem> postagens;
     /* ---------------------------------------------------- */
 
 
     /* ------------------- Construtores ------------------- */
     public Usuario() {}
 
-    public Usuario(String nome, String login, String password, String email, String sobreMim) {
+    public Usuario(String nome, String login, String password, String email) {
         this.nome = nome;
         this.login = login;
         this.password = password;
         this.email = email;
         this.foto = null;
-        this.sobreMim = sobreMim;
     }
     /* ---------------------------------------------------- */
 

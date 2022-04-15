@@ -17,4 +17,7 @@ public interface PostagemRepository extends JpaRepository<Postagem, Integer> {
 
     @Query("SELECT conteudoPostagem FROM Postagem postagem")
     public List<String> findConteudos();
+
+    @Query("SELECT id FROM Postagem postagem")
+    public List<Integer> findIds();
 }

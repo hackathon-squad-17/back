@@ -14,7 +14,7 @@
 	<name>hackathon-backend</name>
 	<description>Projeto da parte do Back End do Hackathon da empresa FCamara.</description>
 	<properties>
-		<java.version>11</java.version>
+		<java.version>16</java.version>
 	</properties>
 	<dependencies>
 		<dependency>

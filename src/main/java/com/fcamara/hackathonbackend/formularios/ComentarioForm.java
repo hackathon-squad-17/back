@@ -1,11 +1,10 @@
-package com.fcamara.hackathonbackend.model;
+package com.fcamara.hackathonbackend.formularios;
 
-public class PostagemForm {
+public class ComentarioForm {
     /* ------------------- Propriedades ------------------- */
     private String login;
     private String conteudo;
-    private String titulo;
-    private String categoria;
+    private Integer idPost;
     /* ---------------------------------------------------- */
 
 
@@ -26,21 +25,12 @@ public class PostagemForm {
         this.conteudo = conteudo;
     }
 
-    public String getTitulo() {
-        return titulo;
+    public Integer getIdPost() {
+        return idPost;
     }
 
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
+    public void setIdPost(Integer idPost) {
+        this.idPost = idPost;
     }
-
-    public String getCategoria() {
-        return categoria;
-    }
-
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
-    }
-
     /* ---------------------------------------------------- */
 }
