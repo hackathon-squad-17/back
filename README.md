@@ -1,5 +1,7 @@
 ## Entendendo e executando a aplicação :rocket:
 
+____________________________________________________________________________________________________
+
 ### :orange: Aplicação Back-End para o Hackathon do Programa de Formação FCamara {Season 3} 
 
 Este é o projeto da aplicação back-end desenvolvida para a etapa de Hackathon do Programa de Formação da empresa FCamara {Season 3}. Esta parte do projeto foi desenvolvida em Java, utilizando:
@@ -16,7 +18,11 @@ Este é o projeto da aplicação back-end desenvolvida para a etapa de Hackathon
 
 :elephant: pgAdmin4, como interface gráfica do banco de dados
 
+
+
 ### :memo: Pré-requisitos e informações
+
+____________________________________________________
 
 Antes de mais nada, para executar e editar essa aplicação, você precisará de:
 
@@ -40,7 +46,11 @@ Você pode utilizar também:
 
 Para acessar o Swagger da aplicação, o endereço http://localhost:8080/swagger-ui.html#/ deve ser colado na barra de endereço do navegador enquanto a aplicação estiver em execução na IDE.
 
+
+
 ### :wrench: Instalação
+
+___
 
 Não tem o OpenJDK instalado? Confira aqui alguns tutoriais que podem ser usados para fazer a instalação: 
 
@@ -92,7 +102,11 @@ Na primeira vez que a aplicação for executada, você deve acessar o arquivo `a
 
 Após executar a primeira vez, reverta essas modificações, colocando a primeira como `= update` e comentando a segunda.
 
+
+
 ### :computer: Detalhes da aplicação
+
+_____
 
 A aplicação contém quatro classes que são mapeadas como entidades para o banco de dados PostgreSQL. Toda a integração com o banco é feita utilizando JPA com Hibernate.
 
@@ -106,7 +120,19 @@ A aplicação contém quatro classes que são mapeadas como entidades para o ban
 
 :bust_in_silhouette: :triangular_flag_on_post: :pencil2: :tennis: :passport_control: Todas as respectivas Controllers possuem os métodos GET e POST para suas Classes. Na Controller de Usuario, estão ainda métodos do tipo PUT que permitem que os usuário alterem alguns dados, enquanto que na de Postagem está incluído, um método que é capaz retornar as postagens de um usuário específico.
 
+
+
+### :pushpin: Versão
+
+_____
+
+O controle de versionamento foi feito com o GIT.
+
+
+
 ### :black_nib: Autores 
+
+______
 
 :eight_spoked_asterisk: **Sarita Rimes** - *Desenvolvedora responsável pela construção e configuração da aplicação* - [SaritaRimes](https://github.com/SaritaRimes)
 
