@@ -1,5 +1,9 @@
 ## Entendendo e executando a aplicação :rocket:
 
+![image]({https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white}) ![image]({https://img.shields.io/badge/IntelliJ_IDEA-000000.svg?style=for-the-badge&logo=intellij-idea&logoColor=white}) ![image]({https://img.shields.io/badge/Spring_Boot-F2F4F9?style=for-the-badge&logo=spring-boot}) ![image]({https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=Swagger&logoColor=white}) ![image]({https://img.shields.io/badge/Hibernate-59666C?style=for-the-badge&logo=Hibernate&logoColor=white}) ![image]({https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white}) ![image]({https://img.shields.io/badge/GIT-E44C30?style=for-the-badge&logo=git&logoColor=white})
+
+
+
 ____________________________________________________________________________________________________
 
 ### :orange: Aplicação Back-End para o Hackathon do Programa de Formação FCamara {Season 3} 
@@ -20,11 +24,17 @@ Este é o projeto da aplicação back-end desenvolvida para a etapa de Hackathon
 
 
 
+:sparkles: Antes de continuar, você pode ver a aplicação completa (front-end e back-end) funcionando! Para isso, acesse este link: [[Technical Share](https://technical-share.vercel.app/)] :sparkles:
+
+
+
 ### :memo: Pré-requisitos e informações
 
 ____________________________________________________
 
-Antes de mais nada, para executar e editar essa aplicação, você precisará de:
+Agora vamos aos trabalhos! 
+
+Para executar e editar essa aplicação, você precisará de:
 
 :space_invader: JDK (Java Development Kit)
 
