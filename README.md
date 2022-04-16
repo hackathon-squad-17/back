@@ -1,4 +1,4 @@
-## :sparkles: Acessando a aplicação completa (front + back) :sparkles:
+## Acessando a aplicação completa (front + back) :sparkles:
 
 Antes de passarmos para as especificações técnicas, você pode ver a aplicação completa (front-end e back-end) funcionando! Para isso, acesse este link: :arrow_forward: [[Technical Share](https://technical-share.vercel.app/)] :arrow_backward:
 
